@@ -1,0 +1,93 @@
+"use client"; // This is the fix for the error. It marks the component for client-side rendering.
+
+import React, { useState } from "react";
+import { Mail, CheckCircle } from "lucide-react";
+
+// --- Main Call to Action Component ---
+const CallToActionSection = () => {
+  const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email && email.includes("@")) {
+      setIsSubmitted(true);
+      setMessage("Thank you for subscribing!");
+      // You can add your actual newsletter signup logic here (e.g., API call)
+      console.log("Newsletter signup:", email);
+    } else {
+      setMessage("Please enter a valid email address.");
+    }
+  };
+
+  return (
+    <section className="bg-gradient-to-br from-[#b9bf8f] to-[#d1d6b0] w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 items-center">
+          
+          {/* --- Left Column: Content & Form --- */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left animate-fadeIn">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">
+              Stay Updated with Our Newsletter
+            </h2>
+            <p className="mt-3 md:mt-4 text-base sm:text-lg text-gray-700 max-w-lg">
+              Subscribe to receive exclusive offers, product updates, and
+              creative inspiration directly to your inbox.
+            </p>
+
+            {isSubmitted ? (
+              <div className="mt-6 md:mt-8 flex items-center gap-3 bg-green-100 text-green-800 p-4 rounded-lg w-full max-w-md animate-fadeIn">
+                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
+                <p className="font-semibold">{message}</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="mt-6 md:mt-8 w-full max-w-md">
+                <div className="flex flex-col sm:flex-row gap-3 w-full">
+                  <label htmlFor="email-input" className="sr-only">
+                    Email address
+                  </label>
+                  <input
+                    id="email-input"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                    className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#1A1570] focus:border-[#1A1570] shadow-sm"
+                    aria-describedby="email-terms"
+                  />
+                  <button
+                    type="submit"
+                    className="px-6 py-3 bg-[#1A1570] text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 hover:scale-105 transition-all duration-300 whitespace-nowrap"
+                  >
+                    Subscribe
+                  </button>
+                </div>
+                <p id="email-terms" className="mt-3 text-xs text-gray-600">
+                  By clicking Subscribe, you agree to our Terms and Conditions.
+                </p>
+                {message && !isSubmitted && <p className="mt-2 text-sm text-red-600">{message}</p>}
+              </form>
+            )}
+          </div>
+
+          {/* --- Right Column: Image --- */}
+          <div className="mt-8 lg:mt-0 lg:block">
+            <div className="relative overflow-hidden rounded-lg shadow-xl">
+              <img
+                src="/images/newsletter-image.jpg"
+                alt="Stationery collection"
+                className="object-cover w-full h-64 sm:h-80 lg:h-[400px] transition-transform duration-700 hover:scale-105 animate-fadeIn"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+
+export default CallToActionSection;
