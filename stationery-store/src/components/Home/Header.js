@@ -58,7 +58,7 @@ const HeaderSection = () => {
     <header className="grid grid-cols-1 lg:grid-cols-2 w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-[90vh] max-h-[800px] min-h-[400px] sm:min-h-[500px] md:min-h-[600px]">
       
       {/* --- Left Column: Content --- */}
-      <div className="bg-[#e0b8ac] flex flex-col justify-center items-center p-6 sm:p-10 md:p-16 lg:p-24 text-center lg:text-left h-full">
+      <div className="bg-gradient-to-b from-[#FFDCDC] to-[#FFD6BA] flex flex-col justify-center items-center p-6 sm:p-10 md:p-16 lg:p-24 text-center lg:text-left h-full">
         <div className="max-w-md w-full flex flex-col items-center lg:items-start">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl text-[#2f153c] leading-tight font-solid fontweight-500 animate-fadeIn">
             Discover Your Perfect Stationery Essentials Today
@@ -87,7 +87,7 @@ const HeaderSection = () => {
 
       {/* --- Right Column: Image Carousel --- */}
       {/* I removed the redundant height classes here to let the parent grid control it. */}
-      <div className="relative flex flex-col bg-[#5e6555] h-[90vh] max-h-[800px] min-h-[600px]">
+      <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[92vh] max-h-[800px] min-h-[00px]">
         {/* Image */}
         <div className="flex-grow h-full">
           <img
@@ -100,12 +100,15 @@ const HeaderSection = () => {
         </div>
 
         {/* Carousel Info & Controls */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/50 to-transparent text-white">
+        <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[#2f153c]/50 to-transparent">
           <div className="max-w-xl mx-auto">
-            <h2 className="text-2xl font-bold">{slides[current].title}</h2>
-            <p className="mt-1 text-white/80">
+            <h2 className="text-2xl font-bold text-white">{slides[current].title}</h2>
+            <p className="mt-1 text-white/90">
               {slides[current].description}
             </p>
+            <button className="mt-4 px-6 py-2 bg-[#FFD6BA] text-[#2f153c] font-semibold rounded-lg shadow-md hover:bg-[#2f153c] hover:text-white hover:scale-105 transition-all duration-300">
+              Purchase this product
+            </button>
             <div className="flex justify-between items-center mt-6">
               {/* Dots */}
               <div className="flex gap-2">
@@ -115,7 +118,7 @@ const HeaderSection = () => {
                     onClick={() => setCurrent(index)}
                     aria-label={`Go to slide ${index + 1}`}
                     className={`h-2 w-2 rounded-full transition-colors ${
-                      current === index ? "bg-white" : "bg-white/30"
+                      current === index ? "bg-[#FFD6BA]" : "bg-[#FFD6BA]/30"
                     }`}
                   />
                 ))}
@@ -125,14 +128,14 @@ const HeaderSection = () => {
                 <button
                   onClick={handlePrevious}
                   aria-label="Previous slide"
-                  className="p-1.5 sm:p-2 bg-white/20 rounded-full hover:bg-white/40 focus:bg-white/40 transition-colors backdrop-blur-sm hover:scale-110 focus:scale-110 transition-transform duration-300 focus:outline-none"
+                  className="p-1.5 sm:p-2 bg-[#FFD6BA]/40 rounded-full hover:bg-[#FFD6BA]/70 focus:bg-[#FFD6BA]/70 transition-colors backdrop-blur-sm hover:scale-110 focus:scale-110 transition-transform duration-300 focus:outline-none text-[#2f153c]"
                 >
                   <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
                 <button
                   onClick={handleNext}
                   aria-label="Next slide"
-                  className="p-1.5 sm:p-2 bg-white/20 rounded-full hover:bg-white/40 focus:bg-white/40 transition-colors backdrop-blur-sm hover:scale-110 focus:scale-110 transition-transform duration-300 focus:outline-none"
+                  className="p-1.5 sm:p-2 bg-[#FFD6BA]/40 rounded-full hover:bg-[#FFD6BA]/70 focus:bg-[#FFD6BA]/70 transition-colors backdrop-blur-sm hover:scale-110 focus:scale-110 transition-transform duration-300 focus:outline-none text-[#2f153c]"
                 >
                   <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>

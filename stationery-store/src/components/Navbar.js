@@ -34,7 +34,7 @@ const NavigationBarSection = () => {
 
   return (
     <nav
-      className="bg-[#FFEACC]/95 backdrop-blur-md shadow-sm sticky top-0 z-50 w-full"
+      className="bg-gradient-to-b from-[#FFDCDC] to-[#FFF2EB] backdrop-blur-md shadow-sm fixed top-0 z-50 w-full"
       role="navigation"
       aria-label="Main navigation"
     >
@@ -54,7 +54,7 @@ const NavigationBarSection = () => {
               <Link
                 key={item.label}
                 href={item.href}
-                className="font-semibold text-gray-600 hover:text-gray-900 transition-colors"
+                className="font-semibold text-[#2f153c] hover:text-[#2f153c] hover:bg-[#FFE8CD]/70 px-3 py-2 rounded-md transition-all duration-200 hover:scale-105"
               >
                 {item.label}
               </Link>
@@ -65,7 +65,7 @@ const NavigationBarSection = () => {
           <div className="hidden md:block">
             <Link
               href="/login"
-              className="px-5 py-2 bg-gray-800 text-white font-semibold rounded-lg shadow-sm hover:bg-gray-700 transition-colors"
+              className="px-5 py-2 bg-[#2f153c] text-white font-semibold rounded-lg shadow-sm hover:bg-[#FFD6BA] hover:text-[#2f153c] hover:scale-105 transition-all duration-300"
             >
               Login
             </Link>
@@ -75,7 +75,7 @@ const NavigationBarSection = () => {
           <div className="flex md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-800 hover:text-gray-900 hover:bg-amber-200/50 focus:outline-none focus:ring-2 focus:ring-amber-300 transition-colors duration-200"
+              className="inline-flex items-center justify-center p-2 rounded-md text-[#2f153c] hover:text-[#2f153c] hover:bg-[#FFE8CD]/70 focus:outline-none focus:ring-2 focus:ring-[#FFD6BA] transition-all duration-200 hover:scale-105"
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu"
             >
@@ -94,7 +94,7 @@ const NavigationBarSection = () => {
 
       {/* Mobile Menu */}
       <div 
-        className={`md:hidden absolute top-full left-0 right-0 bg-[#FFEACC]/95 backdrop-blur-md shadow-md transition-all duration-300 transform ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0 pointer-events-none'}`} 
+        className={`md:hidden absolute top-full left-0 right-0 bg-gradient-to-b from-[#FFF2EB] to-[#FFD6BA] backdrop-blur-md shadow-md transition-all duration-300 transform ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0 pointer-events-none'}`} 
         id="mobile-menu"
       >
         <div className="px-4 pt-2 pb-4 space-y-2">
@@ -102,7 +102,7 @@ const NavigationBarSection = () => {
             <Link
               key={item.label}
               href={item.href}
-              className="block px-4 py-3 rounded-md text-base font-medium text-gray-800 hover:text-gray-900 hover:bg-amber-200/50 transition-colors duration-200 active:bg-amber-200/70"
+              className="block px-4 py-3 rounded-md text-base font-medium text-[#2f153c] hover:text-[#2f153c] hover:bg-[#FFE8CD]/70 transition-all duration-200 active:bg-[#FFE8CD] hover:scale-105"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.label}
@@ -111,7 +111,7 @@ const NavigationBarSection = () => {
           <Link
             href="/login"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="block w-full text-left px-4 py-3 mt-2 rounded-md text-base font-medium text-white bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
+            className="block w-full text-left px-4 py-3 mt-2 rounded-md text-base font-medium text-white bg-[#2f153c] hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-200 hover:scale-105"
           >
             Login
           </Link>

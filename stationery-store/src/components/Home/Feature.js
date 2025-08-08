@@ -14,18 +14,18 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="bg-[#fdea9d] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
+    <section className="bg-gradient-to-b from-[#FFE8CD] to-[#FFDCDC] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
       <div className="flex flex-col w-full max-w-7xl items-start gap-8 md:gap-12 lg:gap-20 relative">
         <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12 lg:gap-20 w-full">
           <div className="w-full md:w-1/2 flex flex-col gap-4">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2f153c] leading-tight">
               Discover Our Impressive Stats That Showcase Our Store&#39;s
               Success!
             </h2>
           </div>
 
           <div className="w-full md:w-1/2 flex flex-col gap-6 md:gap-8">
-            <p className="text-base md:text-lg text-gray-800">
+            <p className="text-base md:text-lg text-[#2f153c]/80">
               With over 1,000 unique products, we cater to every stationery
               need. Join our community of 10,000+ satisfied customers who love
               our quality and service.
@@ -36,13 +36,13 @@ const FeaturesSection = () => {
                 {statsData.map((stat, index) => (
                   <div
                     key={index}
-                    className="flex flex-col gap-2 p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+                    className="flex flex-col gap-2 p-6 bg-[#FFF2EB] rounded-lg shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
                   >
-                    <div className="text-3xl md:text-4xl font-bold text-amber-600">
+                    <div className="text-3xl md:text-4xl font-bold text-[#2f153c]">
                       {stat.value}
                     </div>
 
-                    <p className="text-base text-gray-700">
+                    <p className="text-base text-[#2f153c]/80">
                       {stat.description}
                     </p>
                   </div>

@@ -10,7 +10,7 @@ import Footer from "../Footer";
 
 export default function HomeDesktop() {
   return (
-    <div className="flex flex-col w-full min-h-screen overflow-x-hidden">
+    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-16">
       <NavigationBar />
       <Header />
       <MainContent />

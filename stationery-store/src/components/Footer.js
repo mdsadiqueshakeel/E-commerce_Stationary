@@ -49,7 +49,7 @@ const Logo = () => (
 // --- Main Footer Component ---
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-[#FFEACC]/90 to-[#FFEACC]/70 text-gray-700 shadow-inner">
+    <footer className="bg-gradient-to-b from-[#FFDCDC] to-[#FFD6BA] text-[#2f153c] shadow-inner">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 lg:py-16">
         {/* Top section: Logo, Nav, Socials */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 animate-fadeIn">
@@ -67,7 +67,7 @@ const Footer = () => {
               <Link
                 key={link.text}
                 href={link.href}
-                className="text-sm font-semibold hover:text-gray-900 hover:underline transition-all duration-200 px-2 py-1 rounded-md hover:bg-amber-200/30"
+                className="text-sm font-semibold text-[#2f153c] hover:text-[#2f153c] hover:underline transition-all duration-200 px-2 py-1 rounded-md hover:bg-[#FFE8CD]/70 hover:scale-105"
               >
                 {link.text}
               </Link>
@@ -87,7 +87,7 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Visit our ${social.label} page`}
-                  className="text-gray-500 hover:text-gray-900 hover:scale-110 transition-all duration-300 p-2 rounded-full hover:bg-amber-200/30"
+                  className="text-[#2f153c]/80 hover:text-[#2f153c] hover:scale-110 transition-all duration-300 p-2 rounded-full hover:bg-[#FFE8CD]/70"
                 >
                   <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </a>
@@ -97,11 +97,11 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <hr className="w-full border-t border-gray-300/50 my-6 md:my-8" />
+        <hr className="w-full border-t border-[#2f153c]/20 my-6 md:my-8" />
 
         {/* Bottom section: Copyright and Legal links */}
         <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 sm:gap-6 animate-fadeIn animation-delay-200">
-          <p className="text-sm text-gray-600 mt-4 sm:mt-0">
+          <p className="text-sm text-[#2f153c]/80 mt-4 sm:mt-0">
             © {new Date().getFullYear()} Your Company. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center gap-x-3 sm:gap-x-4 gap-y-2">
@@ -109,7 +109,7 @@ const Footer = () => {
               <Link
                 key={link.text}
                 href={link.href}
-                className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 hover:underline transition-colors duration-200 px-2 py-1 rounded-md hover:bg-amber-200/20"
+                className="text-xs sm:text-sm text-[#2f153c]/80 hover:text-[#2f153c] hover:underline transition-all duration-200 px-2 py-1 rounded-md hover:bg-[#FFE8CD]/70 hover:scale-105"
               >
                 {link.text}
               </Link>

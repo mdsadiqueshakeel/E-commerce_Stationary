@@ -17,24 +17,24 @@ const PageLayoutSection = () => {
   ];
 
   return (
-    <section className="bg-[#a761aa59] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
+    <section className="bg-gradient-to-b from-[#FFE8CD] to-[#FFDCDC] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
       <div className="flex flex-col w-full max-w-7xl items-start gap-8 md:gap-12 lg:gap-20 relative">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-20 w-full">
           <div className="flex flex-col items-start gap-6 md:gap-8 w-full md:w-1/2">
             <div className="flex flex-col items-start gap-6 md:gap-8 w-full">
               <div className="flex flex-col gap-4 w-full">
                 <div className="inline-flex items-center">
-                  <span className="text-sm font-bold uppercase tracking-wider text-purple-900">
+                  <span className="text-sm font-bold uppercase tracking-wider text-[#2f153c]">
                     Inspiration
                   </span>
                 </div>
 
                 <div className="flex flex-col gap-4 md:gap-6 w-full">
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-900 leading-tight">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#2f153c] leading-tight">
                     Discover the Joy of Stationery Shopping
                   </h2>
 
-                  <p className="text-base md:text-lg text-purple-800">
+                  <p className="text-base md:text-lg text-[#2f153c]/80">
                     Our stationery store offers a curated selection of
                     high-quality products. Experience the perfect blend of style
                     and functionality.
@@ -47,15 +47,15 @@ const PageLayoutSection = () => {
                   {features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex flex-col gap-3 p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+                      className="flex flex-col gap-3 p-6 bg-[#FFF2EB] rounded-lg shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
                     >
                       <div className="flex items-start gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
-                          <h3 className="text-xl font-semibold text-purple-900">
+                          <h3 className="text-xl font-semibold text-[#2f153c]">
                             {feature.title}
                           </h3>
 
-                          <p className="text-base text-purple-800">
+                          <p className="text-base text-[#2f153c]/80">
                             {feature.description}
                           </p>
                         </div>
@@ -67,26 +67,24 @@ const PageLayoutSection = () => {
             </div>
 
             <div className="inline-flex items-center gap-6 relative flex-[0_0_auto]">
-              <button className="all-[unset] box-border inline-flex items-center justify-center gap-2 px-6 py-3 relative flex-[0_0_auto] mt-[-1.00px] mb-[-1.00px] ml-[-1.00px] border border-solid border-[color:var(--primitives-color-neutral-darkest)]">
-                <span className="relative w-fit font-text-regular-normal font-[number:var(--text-regular-normal-font-weight)] text-[color:var(--primitives-color-neutral-darkest)] text-[length:var(--text-regular-normal-font-size)] tracking-[var(--text-regular-normal-letter-spacing)] leading-[var(--text-regular-normal-line-height)] whitespace-nowrap [font-style:var(--text-regular-normal-font-style)]">
-                  Shop
+              <button className="inline-flex items-center justify-center gap-2 px-6 py-3 relative flex-[0_0_auto] bg-[#2f153c] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFD6BA] hover:text-[#2f153c] hover:scale-105 transition-all duration-300">
+                <span className="relative w-fit whitespace-nowrap">
+                  Shop Now
                 </span>
               </button>
 
-              <button className="all-[unset] box-border inline-flex items-center justify-center gap-2 relative flex-[0_0_auto]">
-                <span className="relative w-fit font-text-regular-normal font-[number:var(--text-regular-normal-font-weight)] text-[color:var(--primitives-color-neutral-darkest)] text-[length:var(--text-regular-normal-font-size)] tracking-[var(--text-regular-normal-letter-spacing)] leading-[var(--text-regular-normal-line-height)] whitespace-nowrap [font-style:var(--text-regular-normal-font-style)]">
+              <button className="inline-flex items-center justify-center gap-2 relative flex-[0_0_auto] cursor-pointer text-[#2f153c] font-semibold hover:bg-[#FFE8CD]/70 px-4 py-2 rounded-lg hover:scale-105 transition-all duration-300">
+                <span className="relative w-fit whitespace-nowrap">
                   Learn More
                 </span>
-
-                {/* <ChevronRight className="!relative !w-6 !h-6" color="#0D0404" /> */}
               </button>
             </div>
           </div>
 
           <img
-            className="relative flex-1 grow aspect-[0.94] object-cover"
+            className="relative flex-1 grow aspect-[0.94] object-cover rounded-lg shadow-lg"
             alt="Stationery products display showcasing colorful notebooks and office supplies"
-            src="https://placehold.co/800x1200/0D0404/FFFFFF?text=Stationery+Display"
+            src="https://placehold.co/800x1200/2f153c/FFFFFF?text=Stationery+Display"
           />
         </div>
       </div>
