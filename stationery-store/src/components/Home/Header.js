@@ -70,7 +70,7 @@ const HeaderSection = () => {
           </p>
           <div className="mt-6 sm:mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto animate-slideUp animation-delay-200">
             <Link
-              href="/products"
+              href="/product"
               className="px-6 sm:px-8 py-2.5 sm:py-3 bg-[#2f153c] text-white font-semibold rounded-lg shadow-md hover:bg-[#e0b8ac] hover:text-[#2f153c] transition-all hover:scale-105 duration-300"
             >
               Shop Now
@@ -87,7 +87,7 @@ const HeaderSection = () => {
 
       {/* --- Right Column: Image Carousel --- */}
       {/* I removed the redundant height classes here to let the parent grid control it. */}
-      <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[92vh] max-h-[800px] min-h-[00px]">
+      <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[90vh] max-h-[800px] min-h-[600px]">
         {/* Image */}
         <div className="flex-grow h-full">
           <img
@@ -106,9 +106,6 @@ const HeaderSection = () => {
             <p className="mt-1 text-white/90">
               {slides[current].description}
             </p>
-            <button className="mt-4 px-6 py-2 bg-[#FFD6BA] text-[#2f153c] font-semibold rounded-lg shadow-md hover:bg-[#2f153c] hover:text-white hover:scale-105 transition-all duration-300">
-              Purchase this product
-            </button>
             <div className="flex justify-between items-center mt-6">
               {/* Dots */}
               <div className="flex gap-2">

@@ -1,0 +1,26 @@
+import React from "react";
+import Faq from "./Faq";
+import Footer from "../Footer";
+import Header from "./Header";
+import Layout from "./Layout";
+import MainContent from "./MainContent";
+import Navbar from "../Navbar";
+import ProductGallery from "./ProductGallery";
+import ServiceOverview from "./Service";
+
+const ProductDesktop = () => {
+  return (
+    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-16">
+      <Navbar />
+      <ProductGallery />
+      <MainContent />
+      <Header />
+      <Layout />
+      <ServiceOverview />
+      <Faq />
+      <Footer />
+    </div>
+  );
+};
+
+export default ProductDesktop;
