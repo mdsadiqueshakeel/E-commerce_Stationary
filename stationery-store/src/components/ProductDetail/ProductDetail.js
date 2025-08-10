@@ -1,90 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import CartButton from "../CartButton";
+import productData from "../../utils/products.json";
+import featureData from "@/utils/feature.json";
+
 // Replacing imported images with placeholder URLs and SVG components
 
 // Sample product data - in a real app, this would come from an API or database
-const productData = [
-  {
-    id: "1",
-    name: "Notebook Set",
-    category: "Notebooks",
-    variant: "Classic",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Notebook+Set",
-    description: "High-quality notebook set with premium paper. Perfect for journaling, sketching, or taking notes. Includes 3 different sizes.",
-    features: ["Acid-free paper", "Hardcover binding", "Elastic closure", "Inner pocket"]
-  },
-  {
-    id: "2",
-    name: "Pen Collection",
-    category: "Pens",
-    variant: "Gel",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Pen+Collection",
-    description: "Smooth-writing gel pens in various colors. Ideal for everyday writing, art projects, or bullet journaling.",
-    features: ["Smudge-resistant", "Quick-drying ink", "Comfortable grip", "0.5mm fine point"]
-  },
-  {
-    id: "3",
-    name: "Sticky Notes",
-    category: "Sticky Notes",
-    variant: "Bright",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Sticky+Notes",
-    description: "Vibrant sticky notes in assorted colors and sizes. Perfect for reminders, bookmarks, or color-coding your notes.",
-    features: ["Strong adhesive", "Recyclable paper", "Multiple sizes", "Bright colors"]
-  },
-  {
-    id: "4",
-    name: "Planner Book",
-    category: "Planners",
-    variant: "Daily",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Planner+Book",
-    description: "Comprehensive daily planner with sections for goals, tasks, and notes. Stay organized and boost productivity.",
-    features: ["12-month calendar", "Goal tracking", "Task prioritization", "Habit tracker"]
-  },
-  {
-    id: "5",
-    name: "Art Supplies",
-    category: "Art Supplies",
-    variant: "Mixed",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Art+Supplies",
-    description: "Complete art supply kit for beginners and professionals. Includes pencils, markers, and watercolors.",
-    features: ["Professional quality", "Vibrant colors", "Storage case included", "Suitable for all skill levels"]
-  },
-  {
-    id: "6",
-    name: "Craft Kit",
-    category: "Craft Kits",
-    variant: "Complete",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Craft+Kit",
-    description: "All-in-one craft kit with scissors, glue, tape, and more. Everything you need for your DIY projects.",
-    features: ["Premium scissors", "Acid-free glue", "Washi tape collection", "Craft storage box"]
-  },
-  {
-    id: "7",
-    name: "Greeting Cards",
-    category: "Cards",
-    variant: "Assorted",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Greeting+Cards",
-    description: "Beautiful greeting cards for all occasions. Blank inside for your personal message.",
-    features: ["High-quality cardstock", "Envelopes included", "Various designs", "Eco-friendly materials"]
-  },
-  {
-    id: "8",
-    name: "Premium Bundle",
-    category: "Bundles",
-    variant: "Variant",
-    price: "$55",
-    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Premium+Bundle",
-    description: "Our best-selling stationery items bundled together at a special price. The perfect gift for stationery lovers.",
-    features: ["Notebook set", "Pen collection", "Planner", "Gift packaging available"]
-  },
-];
+
+
 
 const ProductDetailsSection = ({ productId }) => {
   const [selectedVariant, setSelectedVariant] = useState("Option one");
@@ -94,11 +18,15 @@ const ProductDetailsSection = ({ productId }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
+    console.log("ProductDetail.js - Received productId:", productId);
     // Find the product with the matching ID
     if (productId) {
-      const foundProduct = productData.find(p => p.id === productId);
+      const foundProduct = productData.find(p => p.id === productId) || featureData.find(p => p.id === productId);
       if (foundProduct) {
         setProduct(foundProduct);
+        console.log("ProductDetail.js - Found product:", foundProduct);
+      } else {
+        console.log("ProductDetail.js - Product not found for ID:", productId);
       }
     }
   }, [productId]);
@@ -160,15 +88,16 @@ const ProductDetailsSection = ({ productId }) => {
   };
 
   return (
-    <section className="flex flex-col items-center gap-4 py-8 px-4 sm:px-6 lg:px-8 relative self-stretch w-full bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD]">
+    <section className="flex flex-col items-center gap-4 py-8 px-4 sm:px-6 lg:px-8 relative self-stretch w-full bg-gradient-to-b from-[#FFDCDC] to-[#FFF0E6]">
+      <CartButton />
       {/* Two-column layout: Column 1 for images, Column 2 for text and buttons */}
       <div className="flex flex-col md:flex-row items-start gap-6 relative self-stretch w-full max-w-6xl mx-auto">
         {/* Column 1: Images */}
         <div className="flex flex-col w-full md:w-1/2 items-start gap-3 relative">
           {/* Main image */}
-          <div className="w-full">
+          <div className="w-full ">
             <img
-              className="w-full h-25rem max-h-[25rem] object-contain rounded-lg shadow-md"
+              className="w-full h-25rem h-[25rem] max-h-[25rem] object-contain rounded-lg shadow-md"
               alt={productImages[selectedImageIndex].alt}
               src={productImages[selectedImageIndex].src}
             />
@@ -436,8 +365,8 @@ const ProductDetailsSection = ({ productId }) => {
                       import('../../utils/cartUtils').then(({ addToCart }) => {
                         if (product) {
                           addToCart(product, quantity, selectedVariant);
+                          window.dispatchEvent(new Event('cartUpdated'));
                           // Show a toast or notification
-                          alert(`${product.name} added to cart!`);
                         }
                       });
                     }}

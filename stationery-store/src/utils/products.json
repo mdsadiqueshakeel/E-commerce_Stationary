@@ -1,0 +1,197 @@
+[
+  {
+    "id": "14",
+    "name": "Notebook Set",
+    "category": "Notebooks",
+    "variant": "Classic",
+    "price": "$55",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Notebook+Set",
+    "description": "High-quality notebook set with premium paper. Perfect for journaling, sketching, or taking notes. Includes 3 different sizes.",
+    "features": [
+      "Acid-free paper",
+      "Hardcover binding",
+      "Elastic closure",
+      "Inner pocket"
+    ]
+  },
+  {
+    "id": "15",
+    "name": "Gel Pen Pack",
+    "category": "pens",
+    "variant": "Metallic",
+    "price": "$29",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Gel+Pen+Pack",
+    "description": "Smooth-writing metallic gel pens for art and everyday use.",
+    "features": ["Metallic ink", "No smudge", "Soft grip", "Refillable"]
+  },
+  {
+    "id": "16",
+    "name": "Color Pencil Set",
+    "category": "pencils",
+    "variant": "Artist Edition",
+    "price": "$75",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Color+Pencil+Set",
+    "description": "Premium color pencils with rich pigments for artists.",
+    "features": [
+      "Vibrant pigments",
+      "Smooth layering",
+      "Break-resistant",
+      "Eco-friendly wood"
+    ]
+  },
+  {
+    "id": "17",
+    "name": "Marker Bundle",
+    "category": "markers",
+    "variant": "Dual Tip",
+    "price": "$45",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Marker+Bundle",
+    "description": "Dual-tip markers with both fine and brush tips for flexibility.",
+    "features": ["Fade-resistant ink", "Non-toxic", "Quick-dry", "Comfort grip"]
+  },
+  {
+    "id": "18",
+    "name": "Planner Pro",
+    "category": "planners",
+    "variant": "Undated",
+    "price": "$60",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Planner+Pro",
+    "description": "An undated planner for maximum flexibility and organization.",
+    "features": [
+      "Habit tracker",
+      "Goal pages",
+      "Monthly reviews",
+      "Durable cover"
+    ]
+  },
+  {
+    "id": "19",
+    "name": "Bright Sticky Notes",
+    "category": "sticky notes",
+    "variant": "Neon Pack",
+    "price": "$15",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Bright+Sticky+Notes",
+    "description": "Eye-catching neon sticky notes in various sizes.",
+    "features": [
+      "Strong adhesive",
+      "Recyclable",
+      "Multi-size pack",
+      "Vivid colors"
+    ]
+  },
+  {
+    "id": "20",
+    "name": "Ultimate Art Kit",
+    "category": "Art supplies",
+    "variant": "Mixed Media",
+    "price": "$120",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Ultimate+Art+Kit",
+    "description": "Complete art kit with pencils, markers, and paints.",
+    "features": [
+      "All-in-one kit",
+      "High pigment quality",
+      "Portable case",
+      "Non-toxic materials"
+    ]
+  },
+  {
+    "id": "21",
+    "name": "DIY Craft Box",
+    "category": "craft kits",
+    "variant": "Beginner Pack",
+    "price": "$38",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=DIY+Craft+Box",
+    "description": "Starter craft kit for beginners to explore creativity.",
+    "features": ["Glue set", "Scissors included", "Washi tape", "Organizer box"]
+  },
+  {
+    "id": "22",
+    "name": "Sketch Notebook",
+    "category": "notebooks",
+    "variant": "A4 Spiral",
+    "price": "$20",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Sketch+Notebook",
+    "description": "A4 spiral sketchbook with thick, smooth pages.",
+    "features": ["100 GSM paper", "Spiral bound", "Tear-off pages", "Acid-free"]
+  },
+  {
+    "id": "23",
+    "name": "Executive Pen",
+    "category": "pens",
+    "variant": "Luxury",
+    "price": "$90",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Executive+Pen",
+    "description": "Premium luxury pen with smooth ink flow.",
+    "features": [
+      "Brass body",
+      "Refillable cartridge",
+      "Gift box",
+      "Lifetime warranty"
+    ]
+  },
+  {
+    "id": "24",
+    "name": "Mechanical Pencils",
+    "category": "pencils",
+    "variant": "0.7mm Set",
+    "price": "$25",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Mechanical+Pencils",
+    "description": "Set of mechanical pencils with smooth lead.",
+    "features": ["0.7mm HB lead", "Eraser top", "Refillable", "Anti-slip grip"]
+  },
+  {
+    "id": "25",
+    "name": "Fine Liner Markers",
+    "category": "markers",
+    "variant": "Waterproof",
+    "price": "$35",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Fine+Liner+Markers",
+    "description": "Waterproof fine liner markers for detailed work.",
+    "features": ["Archival quality", "No bleed", "Multiple sizes", "Non-toxic"]
+  },
+  {
+    "id": "26",
+    "name": "Travel Planner",
+    "category": "planners",
+    "variant": "Compact",
+    "price": "$48",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Travel+Planner",
+    "description": "Compact planner for travel and trips.",
+    "features": [
+      "Trip budget pages",
+      "Itinerary sections",
+      "Notes area",
+      "Durable binding"
+    ]
+  },
+  {
+    "id": "27",
+    "name": "Pastel Sticky Notes",
+    "category": "sticky notes",
+    "variant": "Soft Colors",
+    "price": "$18",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Pastel+Sticky+Notes",
+    "description": "Soft pastel sticky notes for a calm workspace.",
+    "features": [
+      "Strong adhesive",
+      "Soft color tones",
+      "Multi-size pack",
+      "Smooth paper"
+    ]
+  },
+  {
+    "id": "28",
+    "name": "Professional Brush Set",
+    "category": "art supplies",
+    "variant": "Acrylic",
+    "price": "$65",
+    "image": "https://placehold.co/600x400/2f153c/FFFFFF?text=Professional+Brush+Set",
+    "description": "High-quality brushes for acrylic painting.",
+    "features": [
+      "Durable bristles",
+      "Multiple sizes",
+      "Comfort grip",
+      "Washable"
+    ]
+  }
+]

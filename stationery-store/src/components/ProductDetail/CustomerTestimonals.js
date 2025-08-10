@@ -4,7 +4,7 @@ import React from "react";
 const CustomerTestimonials = () => {
   const testimonials = [
     {
-      id: 1,
+      id: "8",
       name: 'Sarah Johnson',
       role: 'Student',
       content: 'These products have completely transformed my study sessions. The quality is exceptional and they last much longer than other brands I have tried.',
@@ -12,7 +12,7 @@ const CustomerTestimonials = () => {
       avatar: 'https://placehold.co/100x100/2f153c/FFFFFF?text=SJ',
     },
     {
-      id: 2,
+      id: "9",
       name: 'Michael Chen',
       role: 'Graphic Designer',
       content: 'As a designer, Im very particular about my tools. These products exceed my expectations in terms of quality and performance.',
@@ -20,7 +20,7 @@ const CustomerTestimonials = () => {
       avatar: 'https://placehold.co/100x100/2f153c/FFFFFF?text=MC',
     },
     {
-      id: 3,
+      id: "10",
       name: 'Emily Rodriguez',
       role: 'Office Manager',
       content: 'Our office switched to these products last year and we have seen a noticeable improvement in productivity. The quality is consistent and reliable.',
@@ -30,7 +30,7 @@ const CustomerTestimonials = () => {
   ];
 
   return (
-    <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#FFE8CD] to-[#FFDCDC]">
+    <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#FFF0E6] to-[#FFDCDC]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-[#2f153c] mb-4">What Our Customers Say</h2>

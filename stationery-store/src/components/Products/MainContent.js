@@ -1,5 +1,8 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import CartButton from "../CartButton";
+import productsData from "../../utils/products.json";
+
 
 const MainContentSection = () => {
   // CSS for hiding scrollbar
@@ -13,80 +16,8 @@ const MainContentSection = () => {
     }
   `;
 
-  const products = [
-    {
-      id: 1,
-      name: "Notebook Set",
-      variant: "Classic",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Notebook+Set",
-      description: "High-quality notebook set with premium paper. Perfect for journaling, sketching, or taking notes. Includes 3 different sizes.",
-      features: ["Acid-free paper", "Hardcover binding", "Elastic closure", "Inner pocket"]
-    },
-    {
-      id: 2,
-      name: "Pen Collection",
-      variant: "Gel",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Pen+Collection",
-      description: "Smooth-writing gel pens in various colors. Ideal for everyday writing, art projects, or bullet journaling.",
-      features: ["Smudge-resistant", "Quick-drying ink", "Comfortable grip", "0.5mm fine point"]
-    },
-    {
-      id: 3,
-      name: "Sticky Notes",
-      variant: "Bright",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Sticky+Notes",
-      description: "Vibrant sticky notes in assorted colors and sizes. Perfect for reminders, bookmarks, or color-coding your notes.",
-      features: ["Strong adhesive", "Recyclable paper", "Multiple sizes", "Bright colors"]
-    },
-    {
-      id: 4,
-      name: "Planner Book",
-      variant: "Daily",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Planner+Book",
-      description: "Comprehensive daily planner with sections for goals, tasks, and notes. Stay organized and boost productivity.",
-      features: ["12-month calendar", "Goal tracking", "Task prioritization", "Habit tracker"]
-    },
-    {
-      id: 5,
-      name: "Art Supplies",
-      variant: "Mixed",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Art+Supplies",
-      description: "Complete art supply kit for beginners and professionals. Includes pencils, markers, and watercolors.",
-      features: ["Professional quality", "Vibrant colors", "Storage case included", "Suitable for all skill levels"]
-    },
-    {
-      id: 6,
-      name: "Craft Kit",
-      variant: "Complete",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Craft+Kit",
-      description: "All-in-one craft kit with scissors, glue, tape, and more. Everything you need for your DIY projects.",
-      features: ["Premium scissors", "Acid-free glue", "Washi tape collection", "Craft storage box"]
-    },
-    {
-      id: 7,
-      name: "Greeting Cards",
-      variant: "Assorted",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Greeting+Cards",
-      description: "Beautiful greeting cards for all occasions. Blank inside for your personal message.",
-      features: ["High-quality cardstock", "Envelopes included", "Various designs", "Eco-friendly materials"]
-    },
-    {
-      id: 8,
-      name: "Premium Bundle",
-      variant: "Variant",
-      price: "$55",
-      image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Premium+Bundle",
-      description: "Our best-selling stationery items bundled together at a special price. The perfect gift for stationery lovers.",
-      features: ["Notebook set", "Pen collection", "Planner", "Gift packaging available"]
-    },
-  ];
+  // Use imported products data from JSON file
+  const products = productsData;
 
   // State declarations after products array
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -103,8 +34,8 @@ const MainContentSection = () => {
       const query = searchQuery.toLowerCase();
       const filtered = products.filter(product => 
         product.name.toLowerCase().includes(query) || 
-        product.description.toLowerCase().includes(query) || 
-        product.features.some(feature => feature.toLowerCase().includes(query))
+        (product.description && product.description.toLowerCase().includes(query)) || 
+        (product.features && product.features.some(feature => feature.toLowerCase().includes(query)))
       );
       setFilteredProducts(filtered);
     }
@@ -127,7 +58,7 @@ const MainContentSection = () => {
       // Update current slide based on scroll position after scrolling
       setTimeout(() => {
         const scrollPosition = scrollContainerRef.current.scrollLeft;
-        const cardWidth = scrollContainerRef.current.scrollWidth / products.length;
+        const cardWidth = scrollContainerRef.current.scrollWidth / filteredProducts.length;
         const newSlide = Math.floor(scrollPosition / cardWidth / productsPerPage);
         setCurrentSlide(newSlide);
       }, 300);
@@ -142,7 +73,7 @@ const MainContentSection = () => {
       // Update current slide based on scroll position after scrolling
       setTimeout(() => {
         const scrollPosition = scrollContainerRef.current.scrollLeft;
-        const cardWidth = scrollContainerRef.current.scrollWidth / products.length;
+        const cardWidth = scrollContainerRef.current.scrollWidth / filteredProducts.length;
         const newSlide = Math.floor(scrollPosition / cardWidth / productsPerPage);
         setCurrentSlide(newSlide);
       }, 300);
@@ -152,9 +83,10 @@ const MainContentSection = () => {
   const handleViewAll = () => {};
 
   return (
-    <section className="bg-gradient-to-b from-[#FFE8CD] to-[#FFDCDC] w-full">
+    <section className="bg-gradient-to-b from-[#FFdcdc] to-[#FFF0E6] w-full">
       <style dangerouslySetInnerHTML={{ __html: hideScrollbarCSS }} />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-20">
+      <CartButton />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 py-4 lg:py-20">
         <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
           <div className="flex-1">
             <div className="inline-flex items-center">
@@ -244,19 +176,23 @@ const MainContentSection = () => {
                         </div>
                       </div>
                       
-                      <p className="text-sm text-[#2f153c]/70 line-clamp-3 mb-3">{product.description}</p>
+                      {product.description && (
+                        <p className="text-sm text-[#2f153c]/70 line-clamp-3 mb-3">{product.description}</p>
+                      )}
                       
-                      <div className="mt-2 text-[#2f153c]">
-                        <h4 className="text-xs font-semibold  mb-1">Features:</h4>
-                        <ul className="text-xs space-y-1">
-                          {product.features.map((feature, idx) => (
-                            <li key={idx} className="flex items-center">
-                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#2f153c] mr-2"></span>
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      {product.features && (
+                        <div className="mt-2 text-[#2f153c]">
+                          <h4 className="text-xs font-semibold mb-1">Features:</h4>
+                          <ul className="text-xs space-y-1">
+                            {product.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-center">
+                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#2f153c] mr-2"></span>
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </a>
                   

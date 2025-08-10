@@ -22,16 +22,16 @@ const CallToActionSection = () => {
   };
 
   return (
-    <section className="bg-gradient-to-br from-[#FFDCDC] to-[#FFE8CD] w-full">
+    <section className="bg-gradient-to-b from-[#FFE0E6] to-[#FFdcdc] w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 items-center">
           
           {/* --- Left Column: Content & Form --- */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left animate-fadeIn">
+          <div className="flex flex-col items-center text-[#2f153c]/80 lg:items-start text-center lg:text-left animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#2f153c]">
               Stay Updated with Our Newsletter
             </h2>
-            <p className="mt-3 md:mt-4 text-base sm:text-lg text-[#2f153c]/80 max-w-lg">
+            <p className="mt-3 md:mt-4 text-base sm:text-lg  max-w-lg">
               Subscribe to receive exclusive offers, product updates, and
               creative inspiration directly to your inbox.
             </p>

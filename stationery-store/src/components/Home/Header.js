@@ -4,36 +4,17 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-// --- Data for the slides ---
-const slides = [
-  {
-    id: 1,
-    title: "Timeless Notebooks",
-    description:
-      "Capture your thoughts in our elegantly crafted notebooks, perfect for every occasion.",
-    image: "https://placehold.co/800x1200/5e6555/FFFFFF?text=Notebooks",
-  },
-  {
-    id: 2,
-    title: "Precision Pens",
-    description:
-      "Experience the smooth flow of our premium pens, designed for comfort and style.",
-    image: "https://placehold.co/800x1200/5e6555/FFFFFF?text=Pens",
-  },
-  {
-    id: 3,
-    title: "Artisan Paper",
-    description:
-      "From sketch to final draft, our high-quality paper is the perfect canvas.",
-    image: "https://placehold.co/800x1200/5e6555/FFFFFF?text=Paper",
-  },  {
-    id: 4,
-    title: "Artisan Paper",
-    description:
-      "From sketch to final draft, our high-quality paper is the perfect canvas.",
-    image: "https://placehold.co/800x1200/5e6555/FFFFFF?text=Sketch",
-  },
-];
+// --- Import data for the slides ---
+import featuredProducts from "@/utils/feature.json";
+
+// --- Use the imported data for slides ---
+const slides = featuredProducts.map(product => ({
+  id: product.id,
+  title: product.name,
+  description: product.description,
+  image: product.image,
+}));
+
 
 // --- Main Header Component ---
 const HeaderSection = () => {
@@ -58,7 +39,7 @@ const HeaderSection = () => {
     <header className="grid grid-cols-1 lg:grid-cols-2 w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-[90vh] max-h-[50rem] min-h-[25rem] sm:min-h-[31.25rem] md:min-h-[37.5rem]">
       
       {/* --- Left Column: Content --- */}
-      <div className="bg-gradient-to-b from-[#FFDCDC] to-[#FFD6BA] flex flex-col justify-center items-center p-6 sm:p-10 md:p-16 lg:p-24 text-center lg:text-left h-full">
+      <div className="bg-gradient-to-b from-[#FFDCDC] to-[#FFF0E6] flex flex-col justify-center items-center p-6 sm:p-10 md:p-16 lg:p-24 text-center lg:text-left h-full">
         <div className="max-w-md w-full flex flex-col items-center lg:items-start">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl text-[#2f153c] leading-tight font-solid fontweight-500 animate-fadeIn">
             Discover Your Perfect Stationery Essentials Today
@@ -87,7 +68,7 @@ const HeaderSection = () => {
 
       {/* --- Right Column: Image Carousel --- */}
       {/* I removed the redundant height classes here to let the parent grid control it. */}
-      <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[90vh] max-h-[50rem] min-h-[37.5rem]">
+      <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[95vh] max-h-[50rem] min-h-[37.5rem]">
         {/* Image */}
         <div className="flex-grow h-full">
           {/* adding a link to attach with image to redirect to the product detail page */}
@@ -97,7 +78,7 @@ const HeaderSection = () => {
               src={slides[current].image}
               alt={slides[current].title}
               className="w-full h-full object-cover animate-fade-in"
-              onError={(e) => { e.currentTarget.src = 'https://placehold.co/800x1200/5e6555/FFFFFF?text=Stationery'; }}
+              onError={(e) => { e.currentTarget.src = `https://placehold.co/800x1200/5e6555/FFFFFF?text=${slides[current].title}`; }}
             />
           </Link>
         </div>

@@ -81,7 +81,7 @@ const CartContent = () => {
   };
 
   return (
-    <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8   w-full bg-gradient-to-br from-[#FFF2EB] to-[#FFCDCD]">
+    <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8   w-full bg-gradient-to-b from-[#FFDCDC] to-[#FFF0E6]">
       <CartHeader />
       
       {isLoading ? (

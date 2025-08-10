@@ -1,35 +1,16 @@
 import React from "react";
-// import { ChevronRight } from "./ChevronRight";
-// import placeholderImage4 from "./placeholder-image-4.png";
-// import placeholderImage5 from "./placeholder-image-5.png";
-// import placeholderImage6 from "./placeholder-image-6.png";
+import allProducts from "../../utils/products.json";
 
 const ProductShowcaseSection = () => {
-  const showcaseItems = [
-    {
-      id: 1,
-      image: "https://placehold.co/800x1200/2f153c/FFFFFF?text=Quality+Materials",
-      title: "Quality Materials for Lasting Impressions",
-      description:
-        "We use only the finest materials to ensure durability and style.",
-    },
-    {
-      id: 2,
-      image: "https://placehold.co/800x1200/2f153c/FFFFFF?text=Eco-Friendly+Options",
-      title: "Eco-Friendly Options for Conscious Consumers",
-      description:
-        "Choose from a range of sustainable products that are kind to the planet.",
-    },
-    {
-      id: 3,
-      image: "https://placehold.co/800x1200/2f153c/FFFFFF?text=Customizable+Designs",
-      title: "Customizable Designs for Personal Touch",
-      description: "Personalize your stationery to reflect your unique style.",
-    },
-  ];
+  const showcaseItems = allProducts.filter(product => product.id === "14" || product.id === "15" || product.id === "16").map(product => ({
+    id: product.id,
+    image: product.image,
+    title: product.name,
+    description: product.description
+  }));
 
   return (
-    <section className="bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative mt-16 sm:mt-0">
+    <section className="bg-gradient-to-b from-[#FAEBD7] to-[#FFE4C4] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative mt-16 sm:mt-0">
       <div className="flex-col w-full max-w-7xl gap-8 md:gap-12 lg:gap-20 flex items-center relative">
         <header className="max-w-[var(--spacing-sizing-max-width-max-width-large)] items-center flex flex-col gap-4 relative w-full flex-[0_0_auto]">
           <div className="inline-flex items-center relative flex-[0_0_auto]">

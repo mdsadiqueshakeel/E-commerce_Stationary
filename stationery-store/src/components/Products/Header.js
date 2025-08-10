@@ -5,7 +5,7 @@ import { ChevronRight } from "./ChevronRight";
 const HeaderSection = () => {
   const features = [
     {
-      id: 1,
+      id: "22",
       image: "https://placehold.co/800x500/2f153c/FFFFFF?text=Premium+Materials",
       title:
         "Quality materials ensure durability and a premium writing experience.",
@@ -14,7 +14,7 @@ const HeaderSection = () => {
       buttonText: "Shop",
     },
     {
-      id: 2,
+      id: "23",
       image: "https://placehold.co/800x500/2f153c/FFFFFF?text=Eco-Friendly",
       title:
         "Eco-friendly options available for the environmentally conscious consumer.",
@@ -22,7 +22,7 @@ const HeaderSection = () => {
       buttonText: "Explore",
     },
     {
-      id: 3,
+      id: "24",
       image: "https://placehold.co/800x500/2f153c/FFFFFF?text=Customizable",
       title: "Customizable products to make your stationery truly yours.",
       description:
@@ -32,7 +32,7 @@ const HeaderSection = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-[#FFDCDC] to-[#FFD6BA] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-16 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
+    <section className="bg-gradient-to-b from-[#FAEBD7] to-[#FFE4C4] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-16 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
       <div className="flex-col w-full max-w-7xl gap-8 md:gap-12 lg:gap-16 flex items-center relative">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#2f153c] leading-tight text-center max-w-3xl">
           Discover the unique features that make our stationery stand out.

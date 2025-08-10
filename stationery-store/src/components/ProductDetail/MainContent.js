@@ -1,23 +1,25 @@
 "use client";
 import React from "react";
+import CartButton from "../CartButton";
+
 
 const MainContentSection = () => {
   const features = [
     {
-      id: 1,
+      id: "11",
       title: "Discover specifications that enhance your stationery experience.",
       description:
         "Our products are designed with quality and functionality in mind.",
       buttonText: "View",
     },
     {
-      id: 2,
+      id: "12",
       title: "Uncover the details that make our stationery stand out.",
       description: "Each item is crafted to meet your unique needs.",
       buttonText: "Check",
     },
     {
-      id: 3,
+      id: "13",
       title: "Learn about the innovative features of our latest products.",
       description:
         "Stay informed with specifications that ensure quality and performance.",
@@ -26,7 +28,8 @@ const MainContentSection = () => {
   ];
 
   return (
-    <section className="flex flex-col items-center gap-12 sm:gap-16 md:gap-20 py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 relative self-stretch w-full flex-[0_0_auto] bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD]">
+    <section className="flex flex-col items-center gap-12 sm:gap-16 md:gap-20 py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 relative self-stretch w-full flex-[0_0_auto] bg-gradient-to-b from-[#FFE4C4] to-[#FFF0E6]">
+      <CartButton />
       <div className="flex-col max-w-7xl gap-12 sm:gap-16 md:gap-20 flex items-center relative w-full flex-[0_0_auto]">
         <h2 className="w-full max-w-3xl text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#2f153c] leading-tight relative">
           Explore the essential features of our premium stationery products

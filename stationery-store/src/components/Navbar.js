@@ -57,7 +57,7 @@ const NavigationBarSection = () => {
 
   return (
     <nav
-      className="bg-gradient-to-b from-[#FFDCDC] to-[#FFF2EB] backdrop-blur-md shadow-sm fixed top-0 z-50 w-full"
+      className="bg-[#FFDCDC] backdrop-blur-md shadow-sm fixed top-0 z-50 w-full"
       role="navigation"
       aria-label="Main navigation"
     >

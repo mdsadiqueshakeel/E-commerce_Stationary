@@ -17,7 +17,7 @@ const PageLayoutSection = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-[#FFE8CD] to-[#FFDCDC] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
+    <section className="bg-gradient-to-b from-[#FFE4C4] to-[#FAEBD7] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
       <div className="flex flex-col w-full max-w-7xl items-start gap-8 md:gap-12 lg:gap-20 relative">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-20 w-full">
           <div className="flex flex-col items-start gap-6 md:gap-8 w-full md:w-1/2">

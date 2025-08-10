@@ -14,10 +14,10 @@ const CartItems = ({ cartItems, updateQuantity, removeItem }) => {
           <div 
             key={item.id} 
             id={`cart-item-${item.id}`}
-            className={`py-6 flex flex-col sm:flex-row gap-4 ${itemEnterClass}`}
+            className={`py-6 flex flex-row sm:flex-row gap-4 ${itemEnterClass}`}
           >
             {/* Product Image */}
-            <div className="flex-shrink-0 w-full sm:w-24 h-24 bg-gray-100 rounded-md overflow-hidden">
+            <div className="flex-shrink-0 w-1/4 sm:w-24 h-24 bg-gray-100 rounded-md overflow-hidden">
               <img 
                 src={item.image} 
                 alt={item.name} 

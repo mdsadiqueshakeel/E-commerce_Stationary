@@ -23,7 +23,7 @@ const FaqSection = () => {
   };
 
   return (
-    <section className="bg-gradient-to-b from-[#FFDCDC] to-[#FFF2EB] w-full">
+    <section className="bg-gradient-to-b from-[#FFF0E6] to-[#FFDCDC] w-full">
       <div className="max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-24">
         <header className="flex flex-col gap-3 text-center items-center">
           <h2 className="text-3xl md:text-4xl font-bold text-[#2f153c]">FAQs</h2>

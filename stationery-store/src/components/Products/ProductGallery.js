@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import allProducts from "../../utils/products.json";
 
 const ProductGallerySection = () => {
   // CSS for hiding scrollbar
@@ -14,6 +15,24 @@ const ProductGallerySection = () => {
   `;
 
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [showAllProducts, setShowAllProducts] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Set initial value
+    handleResize();
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   const categories = [
     { id: 'all', name: 'All' },
@@ -27,20 +46,17 @@ const ProductGallerySection = () => {
     { id: 'craft-kits', name: 'Craft Kits' },
   ];
   
-  const products = [
-    { id: 1, name: "Notebook Set", category: "Classic", price: "$55", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Notebook+Set", alt: "Notebook Set" },
-    { id: 2, name: "Pen Collection", category: "Gel", price: "$55", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Pen+Collection", alt: "Pen Collection" },
-    { id: 3, name: "Sticky Notes", category: "Bright", price: "$55", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Sticky+Notes", alt: "Sticky Notes" },
-    { id: 4, name: "Planner Book", category: "Daily", price: "$55", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Planner+Book", alt: "Planner Book" },
-    { id: 5, name: "Art Supplies", category: "Mixed", price: "$55", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Art+Supplies", alt: "Art Supplies" },
-    { id: 6, name: "Craft Kit", category: "Complete", price: "$55", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Craft+Kit", alt: "Craft Kit" },
-    { id: 7, name: "Greeting Cards", category: "Assorted", price: "$55", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Greeting+Cards", alt: "Greeting Cards" },
-    { id: 8, name: "Color Pencils", category: "pens", price: "$105", image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Color+Pencils", alt: "Color Pencils" },
-  ];
+  const products = allProducts.filter(product => product.category !== undefined);
 
+  // Filter products by category (using category field, not variant)
   const filteredProducts = selectedCategory === 'All' ? 
     products : 
     products.filter(product => product.category.toLowerCase() === selectedCategory.toLowerCase());
+    
+  // Limit the number of products shown initially
+  const limitedProducts = showAllProducts ? 
+    filteredProducts : 
+    filteredProducts.slice(0, isMobile ? 4 : 8);
 
   const categorySliderRef = useRef(null);
 
@@ -56,7 +72,7 @@ const ProductGallerySection = () => {
       <a href={`/product/${product.id}`} className="block w-full">
         <div className="relative w-full overflow-hidden">
           <div className="absolute top-2 right-2 z-10 bg-[#FFD6BA]/80 text-[#2f153c] text-xs font-semibold px-2 py-1 rounded-full backdrop-blur-sm">
-            {product.category}
+            {product.variant}
           </div>
           <img 
             className="w-full h-44 sm:h-56 md:h-64 object-cover transition-transform duration-500 hover:scale-110" 
@@ -90,8 +106,7 @@ const ProductGallerySection = () => {
             // Import dynamically to avoid SSR issues
             import('../../utils/cartUtils').then(({ addToCart }) => {
               addToCart(product, 1);
-              // Show a toast or notification
-              alert(`${product.name} added to cart!`);
+              window.dispatchEvent(new Event('cartUpdated'));
             });
           }}
           className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2f153c] text-white rounded-lg hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-200 font-medium"
@@ -103,7 +118,7 @@ const ProductGallerySection = () => {
   );
 
   return (
-    <section className="bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] w-full">
+    <section className="bg-gradient-to-b from-[#FFF0E6] to-[#FAEBD7] w-full">
       <style dangerouslySetInnerHTML={{ __html: hideScrollbarCSS }} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
         <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
@@ -117,7 +132,12 @@ const ProductGallerySection = () => {
             </div>
           </div>
           <div>
-            <a href="#all-products" className="px-6 py-3 bg-[#2f153c] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFD6BA] hover:text-[#2f153c] hover:scale-105 transition-all duration-300">View all</a>
+            <button 
+              onClick={() => setShowAllProducts(!showAllProducts)} 
+              className="px-6 py-3 bg-[#2f153c] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFD6BA] hover:text-[#2f153c] hover:scale-105 transition-all duration-300"
+            >
+              {showAllProducts ? 'Show Less' : 'View All'}
+            </button>
           </div>
         </header>
 
@@ -162,11 +182,22 @@ const ProductGallerySection = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {filteredProducts.map((product) => (
+        <div id="all-products" className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          {limitedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+        
+        {!showAllProducts && filteredProducts.length > (isMobile ? 4 : 8) && (
+          <div className="mt-8 text-center">
+            <button 
+              onClick={() => setShowAllProducts(true)}
+              className="px-6 py-3 bg-[#2f153c] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFD6BA] hover:text-[#2f153c] hover:scale-105 transition-all duration-300"
+            >
+              View All {filteredProducts.length} Products
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

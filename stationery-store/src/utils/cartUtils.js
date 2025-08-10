@@ -18,7 +18,7 @@ export const addToCart = (product, quantity = 1, variant = null) => {
     
     // Check if product already exists in cart
     const existingItemIndex = cart.findIndex(item => 
-      item.id === product.id && 
+      String(item.id) === String(product.id) && 
       (variant ? item.variant === variant : true)
     );
     
@@ -91,4 +91,47 @@ export const getCart = () => {
  */
 export const clearCart = () => {
   localStorage.removeItem('cart');
+};
+
+/**
+ * Update the quantity of a product in the cart
+ * @param {string|number} productId - The ID of the product to update
+ * @param {number} newQuantity - The new quantity to set
+ * @param {string} variant - The variant to update (optional)
+ * @returns {Array} The updated cart items
+ */
+export const updateCartItemQuantity = (productId, newQuantity, variant = null) => {
+  try {
+    const existingCart = localStorage.getItem('cart');
+    if (!existingCart) return [];
+    
+    let cart = JSON.parse(existingCart);
+    
+    // Find the item to update
+    const itemIndex = cart.findIndex(item => 
+      String(item.id) === String(productId) && 
+      (variant ? item.variant === variant : true)
+    );
+    
+    if (itemIndex >= 0) {
+      if (newQuantity <= 0) {
+        // Remove item if quantity is 0 or less
+        cart.splice(itemIndex, 1);
+      } else {
+        // Update quantity
+        cart[itemIndex].quantity = newQuantity;
+      }
+      
+      // Save updated cart to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      // Dispatch event to notify other components
+      window.dispatchEvent(new Event('cartUpdated'));
+    }
+    
+    return cart;
+  } catch (error) {
+    console.error('Error updating cart item quantity:', error);
+    return [];
+  }
 };

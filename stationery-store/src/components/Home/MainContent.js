@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 
 const MainContentSection = () => {
   return (
-    <section className="bg-gradient-to-br from-[#FFF2EB] to-[#FFE8CD] w-full">
+    <section className="bg-gradient-to-br from-[#FFF0E6] to-[#FAEBD7] w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-20 py-10 lg:py-24">
 
@@ -29,7 +29,7 @@ const MainContentSection = () => {
             </p>
             <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto animate-fadeIn animation-delay-600">
               <Link
-                href="/shop"
+                href="/product"
                 className="w-full sm:w-auto px-8 py-3 bg-[#2f153c] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFD6BA] hover:text-[#2f153c] hover:scale-105 transition-all duration-300 text-center"
               >
                 Shop Now

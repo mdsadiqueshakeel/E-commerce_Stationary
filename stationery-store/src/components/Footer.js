@@ -49,7 +49,7 @@ const Logo = () => (
 // --- Main Footer Component ---
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-[#FFDCDC] to-[#FFD6BA] text-[#2f153c] shadow-inner">
+    <footer className="bg-gradient-to-b from-[#FFDCDC] to-[#FFF0E6] text-[#2f153c] shadow-inner">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 lg:py-16">
         {/* Top section: Logo, Nav, Socials */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 animate-fadeIn">

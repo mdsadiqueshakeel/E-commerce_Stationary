@@ -4,21 +4,21 @@ import { ChevronRight } from "./ChevronRight";
 const LayoutSection = () => {
   const services = [
     {
-      id: 1,
+      id: "25",
       image: "https://placehold.co/800x500/2f153c/FFFFFF?text=Custom+Design",
       title: "Custom Design Solutions for Every Need",
       description:
         "Our custom design services are crafted to elevate your brand.",
     },
     {
-      id: 2,
+      id: "26",
       image: "https://placehold.co/800x500/2f153c/FFFFFF?text=Marketing",
       title: "Marketing Strategies That Drive Results",
       description:
         "We develop targeted marketing strategies to boost your visibility.",
     },
     {
-      id: 3,
+      id: "27",
       image: "https://placehold.co/800x500/2f153c/FFFFFF?text=Consultation",
       title: "Expert Consultation to Guide Your Journey",
       description:
@@ -27,7 +27,7 @@ const LayoutSection = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
+    <section className="bg-gradient-to-b from-[#FFE4C4] to-[#FAEBD7] flex flex-col w-full items-center gap-8 md:gap-12 lg:gap-20 py-12 md:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 relative">
       <div className="w-full max-w-7xl flex flex-col items-center gap-8 md:gap-12 lg:gap-16">
         <header className="flex flex-col items-center gap-4 max-w-3xl text-center">
           <span className="text-sm font-bold uppercase tracking-wider text-[#2f153c]">Innovate</span>

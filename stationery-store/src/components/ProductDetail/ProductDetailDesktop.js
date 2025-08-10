@@ -17,6 +17,7 @@ const PdpDesktop = () => {
     // Extract product ID from URL parameters
     if (params && params.product) {
       setProductId(params.product);
+      console.log("Product ID from URL:", params.product);
     }
   }, [params]);
 

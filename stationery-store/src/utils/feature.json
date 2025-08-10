@@ -1,0 +1,77 @@
+[
+  {
+    "id": "200",
+    "name": "Ultimate Art Kit",
+    "category": "Art supplies",
+    "variant": "Mixed Media",
+    "price": "$120",
+    "image": "https://images.unsplash.com/photo-1512314889357-e157c22f938d",
+    "description": "Complete art kit with pencils, markers, and paints.",
+    "features": [
+      "All-in-one kit",
+      "High pigment quality",
+      "Portable case",
+      "Non-toxic materials"
+    ]
+  },
+  {
+    "id": "201",
+    "name": "Deluxe Gaming Headset",
+    "category": "Electronics",
+    "variant": "Surround Sound",
+    "price": "$85",
+    "image": "https://images.unsplash.com/photo-1507680434567-5739c80be1ac",
+    "description": "Immersive over-ear headset with crystal-clear mic and deep bass.",
+    "features": [
+      "7.1 surround sound",
+      "Noise-cancelling microphone",
+      "Soft memory foam cushions",
+      "RGB lighting effects"
+    ]
+  },
+  {
+    "id": "202",
+    "name": "Professional Chef’s Knife",
+    "category": "Kitchen",
+    "variant": "8-inch Blade",
+    "price": "$65",
+    "image": "https://images.unsplash.com/photo-1511376777868-611b54f68947",
+    "description": "High-carbon stainless steel knife for precision cooking.",
+    "features": [
+      "Razor-sharp edge",
+      "Ergonomic handle",
+      "Balanced weight",
+      "Dishwasher safe"
+    ]
+  },
+  {
+    "id": "203",
+    "name": "Premium Yoga Mat",
+    "category": "Fitness",
+    "variant": "Eco-Friendly",
+    "price": "$45",
+    "image": "https://images.unsplash.com/photo-1517685352821-92cf88aee5a5",
+    "description": "Extra-thick non-slip yoga mat for all levels.",
+    "features": [
+      "Non-slip surface",
+      "Extra cushioning",
+      "Lightweight and portable",
+      "Eco-friendly material"
+    ]
+  },
+  {
+    "id": "204",
+    "name": "Luxury Scented Candle Set",
+    "category": "Home Decor",
+    "variant": "Aromatherapy",
+    "price": "$50",
+    "image": "https://images.unsplash.com/photo-1601922046210-41e129a3e64a?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "description": "Set of 3 premium candles with relaxing scents.",
+    "features": [
+      "Long-lasting burn",
+      "Soothing fragrances",
+      "Elegant glass jars",
+      "Perfect for gifting"
+    ]
+  }
+]
