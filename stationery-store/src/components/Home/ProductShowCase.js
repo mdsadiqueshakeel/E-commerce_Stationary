@@ -1,5 +1,6 @@
 import React from "react";
 import allProducts from "../../utils/products.json";
+import Link from "next/link";
 
 const ProductShowcaseSection = () => {
   const showcaseItems = allProducts.filter(product => product.id === "14" || product.id === "15" || product.id === "16").map(product => ({
@@ -56,10 +57,11 @@ const ProductShowcaseSection = () => {
                   <p className="text-base text-[#2f153c]/80 mt-2">
                     {item.description}
                   </p>
-                  
-                  <button className="mt-4 px-4 py-2 bg-[#2f153c] text-white rounded-md hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-300 text-sm font-medium hover:scale-105">
-                    View Details
-                  </button>
+                  <Link href={`/product/${item.id}`}>
+                    <button className="mt-4 px-4 py-2 bg-[#2f153c] text-white rounded-md hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-300 text-sm font-medium hover:scale-105">
+                      View Details
+                    </button>
+                  </Link>
                 </div>
               </div>
             ))}
