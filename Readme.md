@@ -1,6 +1,6 @@
 # Stationery Shop E-commerce Website
 
-This repository contains a modern full-stack e-commerce website for a stationery shop.
+This repository contains a modern full-stack e-commerce website for a stationery shop with an elegant, responsive design.
 
 ## Project Structure
 ```
@@ -14,17 +14,67 @@ This repository contains a modern full-stack e-commerce website for a stationery
 │
 ├── stationery-store/
 │   ├── public/
+│   │   ├── file.svg
+│   │   ├── globe.svg
+│   │   ├── map-placeholder.jpg
+│   │   ├── map1-placeholder.png
+│   │   ├── next.svg
+│   │   ├── vercel.svg
+│   │   └── window.svg
+│   │
 │   ├── src/
 │   │   ├── app/
+│   │   │   ├── about-us/
+│   │   │   ├── cart/
+│   │   │   ├── checkout/
+│   │   │   ├── forgot-password/
+│   │   │   ├── login/
+│   │   │   ├── my-orders/
+│   │   │   ├── order-confirmation/
+│   │   │   ├── product/
+│   │   │   ├── profile/
+│   │   │   ├── signup/
+│   │   │   ├── layout.js
+│   │   │   └── page.js
+│   │   │
 │   │   ├── components/
-│   │   ├── styles/
+│   │   │   ├── AboutUs/
+│   │   │   ├── Auth/
+│   │   │   ├── Cart/
+│   │   │   ├── Checkout/
+│   │   │   ├── Home/
+│   │   │   ├── MyOrders/
+│   │   │   ├── OrderConfirmation/
+│   │   │   ├── ProductDetail/
+│   │   │   ├── Products/
+│   │   │   ├── Profile/
+│   │   │   ├── CartButton.js
+│   │   │   ├── Footer.js
+│   │   │   ├── Navbar.js
+│   │   │   └── ProfileButton.js
+│   │   │
+│   │   ├── Styles/
+│   │   │   ├── globals.css
+│   │   │   └── tailwind.css
+│   │   │
 │   │   └── utils/
-│   └── config files
+│   │       ├── authUtils.js
+│   │       ├── cartUtils.js
+│   │       ├── feature.json
+│   │       ├── mockAuthHelper.js
+│   │       └── products.json
+│   │
+│   ├── .gitignore
+│   ├── eslint.config.mjs
+│   ├── next.config.mjs
+│   ├── package.json
+│   ├── postcss.config.mjs
+│   └── tailwind.config.js
 ```
 
 ## About
 
-A modern e-commerce platform for stationery products built with Next.js and Express. Features include product browsing, cart management, user authentication, and secure checkout.
+A modern e-commerce platform for stationery products built with Next.js and Express, featuring a beautiful gradient design and responsive UI components.
 
 ### Backend Architecture
 
@@ -37,20 +87,36 @@ A modern e-commerce platform for stationery products built with Next.js and Expr
 ### Frontend Architecture 
 
 - **Framework**: Next.js 13+ with React
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS with custom gradients
 - **State Management**: React Context API
-- **Component Structure**: Atomic Design
+- **Component Structure**: Feature-based organization
+- **UI Features**: 
+  - Gradient backgrounds
+  - Smooth hover animations
+  - Responsive grid layouts
+  - Custom color scheme
 - **Entry Point**: `stationery-store/src/app/page.js`
 
 ## Key Features
 
-- 🛍️ Product catalog with categories
-- 🛒 Shopping cart functionality
+- 🎨 Modern gradient-based UI design
+- 🛍️ Product showcase with hover effects
+- 🛒 Interactive shopping cart
 - 👤 User authentication & profiles
 - 💳 Secure checkout process
-- 📱 Responsive design
+- 📱 Fully responsive design
 - 🔍 Product search & filtering
-- ⭐ Product reviews & ratings
+- 📦 Order management system
+
+## Components
+
+### Home Page
+- ProductShowCase component with:
+  - Gradient backgrounds
+  - Image hover effects
+  - Responsive grid layout
+  - Custom button styling
+  - Product cards with shadow effects
 
 ## Getting Started
 
