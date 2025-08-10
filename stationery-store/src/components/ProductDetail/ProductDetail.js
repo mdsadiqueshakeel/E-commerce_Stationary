@@ -168,7 +168,7 @@ const ProductDetailsSection = ({ productId }) => {
           {/* Main image */}
           <div className="w-full">
             <img
-              className="w-full h-auto max-h-[25rem] object-contain rounded-lg shadow-md"
+              className="w-full h-25rem max-h-[25rem] object-contain rounded-lg shadow-md"
               alt={productImages[selectedImageIndex].alt}
               src={productImages[selectedImageIndex].src}
             />

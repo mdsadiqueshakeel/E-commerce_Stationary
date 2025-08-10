@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const MainContentSection = () => {
   // CSS for hiding scrollbar
@@ -12,8 +12,6 @@ const MainContentSection = () => {
       scrollbar-width: none;
     }
   `;
-
-  const [currentSlide, setCurrentSlide] = useState(0);
 
   const products = [
     {
@@ -90,12 +88,34 @@ const MainContentSection = () => {
     },
   ];
 
+  // State declarations after products array
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  // Initialize filteredProducts with products directly
+  const [filteredProducts, setFilteredProducts] = useState(products);
+
+  // Filter products based on search query
+  useEffect(() => {
+    // Only update filteredProducts when searchQuery changes
+    if (searchQuery.trim() === '') {
+      setFilteredProducts(products);
+    } else {
+      const query = searchQuery.toLowerCase();
+      const filtered = products.filter(product => 
+        product.name.toLowerCase().includes(query) || 
+        product.description.toLowerCase().includes(query) || 
+        product.features.some(feature => feature.toLowerCase().includes(query))
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [searchQuery]); // Remove products from dependencies
+
   // Calculate slides based on screen size
   const productsPerPage = 4;
-  const totalSlides = Math.ceil(products.length / productsPerPage);
+  const totalSlides = Math.ceil(filteredProducts.length / productsPerPage);
   
-  // Show all products for horizontal scrolling
-  const visibleProducts = products;
+  // Show filtered products for horizontal scrolling
+  const visibleProducts = filteredProducts;
   
   const scrollContainerRef = useRef(null);
 
@@ -162,6 +182,25 @@ const MainContentSection = () => {
             </button>
           </div>
         </header>
+        
+        {/* Search Bar */}
+        <div className="w-full flex justify-center mt-8">
+          <div className="w-full md:w-2/3 lg:w-1/2 relative">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-[#2f153c]/20 focus:border-[#2f153c] focus:ring-2 focus:ring-[#FFD6BA] outline-none transition-all duration-200 bg-white/90 backdrop-blur-sm shadow-sm text-[#2f153c] placeholder-[#2f153c]/50"
+              aria-label="Search products"
+            />
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#2f153c]/50">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-8">
           <div 
@@ -207,8 +246,8 @@ const MainContentSection = () => {
                       
                       <p className="text-sm text-[#2f153c]/70 line-clamp-3 mb-3">{product.description}</p>
                       
-                      <div className="mt-2">
-                        <h4 className="text-xs font-semibold text-[#2f153c] mb-1">Features:</h4>
+                      <div className="mt-2 text-[#2f153c]">
+                        <h4 className="text-xs font-semibold  mb-1">Features:</h4>
                         <ul className="text-xs space-y-1">
                           {product.features.map((feature, idx) => (
                             <li key={idx} className="flex items-center">
@@ -242,8 +281,8 @@ const MainContentSection = () => {
                         // Import dynamically to avoid SSR issues
                         import('../../utils/cartUtils').then(({ addToCart }) => {
                           addToCart(product, 1);
-                          // Show a toast or notification
-                          alert(`${product.name} added to cart!`);
+                          // Dispatch custom event to update cart count
+                          window.dispatchEvent(new Event('cartUpdated'));
                         });
                       }}
                       className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#2f153c] text-white rounded-lg hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-200 font-medium"

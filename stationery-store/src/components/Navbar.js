@@ -1,8 +1,9 @@
 "use client"; // This is the fix for the error. It marks the component for client-side rendering.
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
+import { getCart } from "../utils/cartUtils";
 
 // --- Reusable SVG Logo ---
 // Replaced the complex, multi-image logo with a single, clean SVG.
@@ -24,11 +25,33 @@ const Logo = () => (
 // --- Main Navigation Bar Component ---
 const NavigationBarSection = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+
+  // Load cart items from localStorage
+  useEffect(() => {
+    const updateCartItems = () => {
+      const items = getCart();
+      setCartItems(items);
+    };
+
+    // Initial load
+    updateCartItems();
+
+    // Listen for storage events to update cart count when cart changes
+    window.addEventListener('storage', updateCartItems);
+    
+    // Custom event for cart updates within the same window
+    window.addEventListener('cartUpdated', updateCartItems);
+
+    return () => {
+      window.removeEventListener('storage', updateCartItems);
+      window.removeEventListener('cartUpdated', updateCartItems);
+    };
+  }, []);
 
   const navigationItems = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/product" },
-    { label: "Cart", href: "/cart" },
     { label: "Categories", href: "/categories" },
   ];
 
@@ -61,8 +84,20 @@ const NavigationBarSection = () => {
             ))}
           </div>
 
-          {/* Desktop Login Button */}
-          <div className="hidden md:block">
+          {/* Desktop Cart Icon and Login Button */}
+          <div className="hidden md:flex md:items-center md:gap-4">
+            {cartItems.length > 0 && (
+              <Link 
+                href="/cart" 
+                className="relative p-2 hover:bg-[#FFE8CD]/70 rounded-full transition-all duration-200"
+                aria-label={`View cart with ${cartItems.length} items`}
+              >
+                <ShoppingCart className="h-5 w-5 text-[#2f153c]" />
+                <span className="absolute -top-1 -right-1 bg-[#2f153c] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItems.length}
+                </span>
+              </Link>
+            )}
             <Link
               href="/login"
               className="px-5 py-2 bg-[#2f153c] text-white font-semibold rounded-lg shadow-sm hover:bg-[#FFD6BA] hover:text-[#2f153c] hover:scale-105 transition-all duration-300"
@@ -108,6 +143,21 @@ const NavigationBarSection = () => {
               {item.label}
             </Link>
           ))}
+          {cartItems.length > 0 && (
+            <Link
+              href="/cart"
+              className="flex items-center justify-between px-4 py-3 rounded-md text-base font-medium text-[#2f153c] hover:text-[#2f153c] hover:bg-[#FFE8CD]/70 transition-all duration-200 active:bg-[#FFE8CD] hover:scale-105"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span className="flex items-center gap-2">
+                <ShoppingCart className="h-5 w-5" />
+                Cart
+              </span>
+              <span className="bg-[#2f153c] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            </Link>
+          )}
           <Link
             href="/login"
             onClick={() => setIsMobileMenuOpen(false)}
