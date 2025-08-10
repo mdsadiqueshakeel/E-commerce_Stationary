@@ -76,7 +76,7 @@ const CallToActionSection = () => {
           <div className="mt-8 lg:mt-0 lg:block">
             <div className="relative overflow-hidden rounded-lg shadow-xl">
               <img
-                src="/images/newsletter-image.jpg"
+                src="https://placehold.co/600x400/2f153c/FFFFFF?text=Stationery+Collection"
                 alt="Stationery collection"
                 className="object-cover w-full h-64 sm:h-80 lg:h-[400px] transition-transform duration-700 hover:scale-105 animate-fadeIn"
               />

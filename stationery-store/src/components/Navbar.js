@@ -28,7 +28,7 @@ const NavigationBarSection = () => {
   const navigationItems = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/product" },
-    { label: "About Us", href: "/about" },
+    { label: "Cart", href: "/cart" },
     { label: "Categories", href: "/categories" },
   ];
 
