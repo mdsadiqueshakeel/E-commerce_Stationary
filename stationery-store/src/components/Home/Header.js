@@ -90,15 +90,17 @@ const HeaderSection = () => {
       <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[90vh] max-h-[800px] min-h-[600px]">
         {/* Image */}
         <div className="flex-grow h-full">
-          <img
-            key={slides[current].id}
-            src={slides[current].image}
-            alt={slides[current].title}
-            className="w-full h-full object-cover animate-fade-in"
-            onError={(e) => { e.currentTarget.src = 'https://placehold.co/800x1200/5e6555/FFFFFF?text=Stationery'; }}
-          />
+          {/* adding a link to attach with image to redirect to the product detail page */}
+          <Link href={`/product/${slides[current].id}`}>
+            <img
+              key={slides[current].id}
+              src={slides[current].image}
+              alt={slides[current].title}
+              className="w-full h-full object-cover animate-fade-in"
+              onError={(e) => { e.currentTarget.src = 'https://placehold.co/800x1200/5e6555/FFFFFF?text=Stationery'; }}
+            />
+          </Link>
         </div>
-
         {/* Carousel Info & Controls */}
         <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[#2f153c]/50 to-transparent">
           <div className="max-w-xl mx-auto">

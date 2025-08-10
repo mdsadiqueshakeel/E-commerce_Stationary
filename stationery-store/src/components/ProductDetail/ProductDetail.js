@@ -430,13 +430,37 @@ const ProductDetailsSection = ({ productId }) => {
               {/* Action buttons */}
               <div className="flex flex-col items-start gap-3 w-full mt-2">
                 <div className="flex flex-col sm:flex-row w-full items-center gap-3">
-                  <button className="flex items-center justify-center px-4 py-2 w-full bg-[#2f153c] border border-solid border-[#2f153c] rounded-lg shadow-sm text-white cursor-pointer hover:bg-[#2f153c]/90 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c]">
+                  <button 
+                    onClick={() => {
+                      // Import dynamically to avoid SSR issues
+                      import('../../utils/cartUtils').then(({ addToCart }) => {
+                        if (product) {
+                          addToCart(product, quantity, selectedVariant);
+                          // Show a toast or notification
+                          alert(`${product.name} added to cart!`);
+                        }
+                      });
+                    }}
+                    className="flex items-center justify-center px-4 py-2 w-full bg-[#2f153c] border border-solid border-[#2f153c] rounded-lg shadow-sm text-white cursor-pointer hover:bg-[#2f153c]/90 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c]"
+                  >
                     <span className="text-sm md:text-base font-medium text-white whitespace-nowrap">
                       Add To Cart
                     </span>
                   </button>
 
-                  <button className="flex items-center justify-center px-4 py-2 w-full border border-solid border-[#2f153c] rounded-lg shadow-sm cursor-pointer hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c]">
+                  <button 
+                    onClick={() => {
+                      // Import dynamically to avoid SSR issues
+                      import('../../utils/cartUtils').then(({ addToCart }) => {
+                        if (product) {
+                          addToCart(product, quantity, selectedVariant);
+                          // Navigate to cart page
+                          window.location.href = '/cart';
+                        }
+                      });
+                    }}
+                    className="flex items-center justify-center px-4 py-2 w-full border border-solid border-[#2f153c] rounded-lg shadow-sm cursor-pointer hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c]"
+                  >
                     <span className="text-sm md:text-base font-medium text-[#2f153c] whitespace-nowrap">
                       Buy Now
                     </span>

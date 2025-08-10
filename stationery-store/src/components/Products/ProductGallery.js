@@ -85,7 +85,17 @@ const ProductGallerySection = () => {
         </div>
       </a>
       <div className="px-4 pb-4 w-full">
-        <button className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2f153c] text-white rounded-lg hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-200 font-medium">
+        <button 
+          onClick={() => {
+            // Import dynamically to avoid SSR issues
+            import('../../utils/cartUtils').then(({ addToCart }) => {
+              addToCart(product, 1);
+              // Show a toast or notification
+              alert(`${product.name} added to cart!`);
+            });
+          }}
+          className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2f153c] text-white rounded-lg hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-200 font-medium"
+        >
           Add to cart
         </button>
       </div>
