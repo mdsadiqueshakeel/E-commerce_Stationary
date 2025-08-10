@@ -38,15 +38,15 @@ const CartItems = ({ cartItems, updateQuantity, removeItem }) => {
                 <div className="flex items-center border border-[#2f153c]/50 rounded-lg overflow-hidden">
                   <button 
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className="px-0.75 py-0.25 bg-gray-100 hover:bg-gray-200 transition-colors"
                     aria-label="Decrease quantity"
                   >
                     -
                   </button>
-                  <span className="px-4 py-1 text-center min-w-[40px]">{item.quantity}</span>
+                  <span className="px-1 py-0.25 text-center min-w-[2.5rem]">{item.quantity}</span>
                   <button 
                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className="px-0.75 py-0.25 bg-gray-100 hover:bg-gray-200 transition-colors"
                     aria-label="Increase quantity"
                   >
                     +

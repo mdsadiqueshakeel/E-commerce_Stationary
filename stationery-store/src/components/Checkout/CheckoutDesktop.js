@@ -3,16 +3,16 @@
 import React from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-import CartContent from "./CartContent";
+import CheckoutContent from "./CheckoutContent";
 
-const CartDesktop = () => {
+const CheckoutDesktop = () => {
   return (
     <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-10">
       <Navbar />
-      <CartContent />
+      <CheckoutContent />
       <Footer />
     </div>
   );
 };
 
-export default CartDesktop;
+export default CheckoutDesktop;

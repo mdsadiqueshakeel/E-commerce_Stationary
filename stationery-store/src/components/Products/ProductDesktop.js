@@ -10,7 +10,7 @@ import ServiceOverview from "./Service";
 
 const ProductDesktop = () => {
   return (
-    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-16">
+    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-10">
       <Navbar />
       <ProductGallery />
       <MainContent />

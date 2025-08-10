@@ -9,7 +9,7 @@ const MainContentSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-20 py-10 lg:py-24">
 
               {/* --- Right Column: Image --- */}          
-          <div className="w-full h-52 sm:h-72 lg:h-[500px] rounded-2xl overflow-hidden shadow-xl transform hover:scale-[1.02] transition-transform duration-500 animate-fadeIn animation-delay-800 relative">
+          <div className="w-full h-52 sm:h-72 lg:h-[31.25rem] rounded-2xl overflow-hidden shadow-xl transform hover:scale-[1.02] transition-transform duration-500 animate-fadeIn animation-delay-800 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-[#FFDCDC]/30 to-[#FFD6BA]/30 z-10"></div>
             <img
               className="w-full h-full object-cover"
@@ -39,7 +39,7 @@ const MainContentSection = () => {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 text-[#2f153c] font-semibold hover:bg-[#FFE8CD]/70 hover:scale-105 rounded-lg transition-all duration-300 text-center"
               >
                 <span>Learn More</span>
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-1.25rem w-1.25rem" />
               </Link>
             </div>
           </div>

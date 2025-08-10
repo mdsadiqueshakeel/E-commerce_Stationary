@@ -10,7 +10,7 @@ const productData = [
     category: "Notebooks",
     variant: "Classic",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Notebook+Set",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Notebook+Set",
     description: "High-quality notebook set with premium paper. Perfect for journaling, sketching, or taking notes. Includes 3 different sizes.",
     features: ["Acid-free paper", "Hardcover binding", "Elastic closure", "Inner pocket"]
   },
@@ -20,7 +20,7 @@ const productData = [
     category: "Pens",
     variant: "Gel",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Pen+Collection",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Pen+Collection",
     description: "Smooth-writing gel pens in various colors. Ideal for everyday writing, art projects, or bullet journaling.",
     features: ["Smudge-resistant", "Quick-drying ink", "Comfortable grip", "0.5mm fine point"]
   },
@@ -30,7 +30,7 @@ const productData = [
     category: "Sticky Notes",
     variant: "Bright",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Sticky+Notes",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Sticky+Notes",
     description: "Vibrant sticky notes in assorted colors and sizes. Perfect for reminders, bookmarks, or color-coding your notes.",
     features: ["Strong adhesive", "Recyclable paper", "Multiple sizes", "Bright colors"]
   },
@@ -40,7 +40,7 @@ const productData = [
     category: "Planners",
     variant: "Daily",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Planner+Book",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Planner+Book",
     description: "Comprehensive daily planner with sections for goals, tasks, and notes. Stay organized and boost productivity.",
     features: ["12-month calendar", "Goal tracking", "Task prioritization", "Habit tracker"]
   },
@@ -50,7 +50,7 @@ const productData = [
     category: "Art Supplies",
     variant: "Mixed",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Art+Supplies",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Art+Supplies",
     description: "Complete art supply kit for beginners and professionals. Includes pencils, markers, and watercolors.",
     features: ["Professional quality", "Vibrant colors", "Storage case included", "Suitable for all skill levels"]
   },
@@ -60,7 +60,7 @@ const productData = [
     category: "Craft Kits",
     variant: "Complete",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Craft+Kit",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Craft+Kit",
     description: "All-in-one craft kit with scissors, glue, tape, and more. Everything you need for your DIY projects.",
     features: ["Premium scissors", "Acid-free glue", "Washi tape collection", "Craft storage box"]
   },
@@ -70,7 +70,7 @@ const productData = [
     category: "Cards",
     variant: "Assorted",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Greeting+Cards",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Greeting+Cards",
     description: "Beautiful greeting cards for all occasions. Blank inside for your personal message.",
     features: ["High-quality cardstock", "Envelopes included", "Various designs", "Eco-friendly materials"]
   },
@@ -80,7 +80,7 @@ const productData = [
     category: "Bundles",
     variant: "Variant",
     price: "$55",
-    image: "https://placehold.co/600x800/2f153c/FFFFFF?text=Premium+Bundle",
+    image: "https://placehold.co/600x400/2f153c/FFFFFF?text=Premium+Bundle",
     description: "Our best-selling stationery items bundled together at a special price. The perfect gift for stationery lovers.",
     features: ["Notebook set", "Pen collection", "Planner", "Gift packaging available"]
   },
@@ -168,7 +168,7 @@ const ProductDetailsSection = ({ productId }) => {
           {/* Main image */}
           <div className="w-full">
             <img
-              className="w-full h-auto max-h-[400px] object-contain rounded-lg shadow-md"
+              className="w-full h-auto max-h-[25rem] object-contain rounded-lg shadow-md"
               alt={productImages[selectedImageIndex].alt}
               src={productImages[selectedImageIndex].src}
             />
@@ -184,11 +184,11 @@ const ProductDetailsSection = ({ productId }) => {
               {productImages.map((image, index) => (
                 <div 
                   key={index} 
-                  className="flex-none w-[250px] snap-start cursor-pointer"
+                  className="flex-none w-[15.625rem] snap-start cursor-pointer"
                   onClick={() => setSelectedImageIndex(index)}
                 >
                   <img
-                    className={`w-full h-[150px] object-cover rounded-lg shadow-sm ${selectedImageIndex === index ? 'ring-2 ring-[#2f153c]' : ''}`}
+                    className={`w-full h-[9.375rem] object-cover rounded-lg shadow-sm ${selectedImageIndex === index ? 'ring-2 ring-[#2f153c]' : ''}`}
                     alt={image.alt}
                     src={image.src}
                   />
@@ -202,7 +202,7 @@ const ProductDetailsSection = ({ productId }) => {
               className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-1 shadow-md z-10"
               aria-label="Previous image"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#2f153c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-1.5rem w-1.5rem text-[#2f153c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -211,7 +211,7 @@ const ProductDetailsSection = ({ productId }) => {
               className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-1 shadow-md z-10"
               aria-label="Next image"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#2f153c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-1.5rem w-1.5rem text-[#2f153c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -226,7 +226,7 @@ const ProductDetailsSection = ({ productId }) => {
                 onClick={() => setSelectedImageIndex(index)}
               >
                 <img
-                  className={`w-full h-[100px] object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ${selectedImageIndex === index ? 'ring-2 ring-[#2f153c]' : ''}`}
+                  className={`w-full h-[6.25rem] object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ${selectedImageIndex === index ? 'ring-2 ring-[#2f153c]' : ''}`}
                   alt={image.alt}
                   src={image.src}
                 />
@@ -416,7 +416,7 @@ const ProductDetailsSection = ({ productId }) => {
                     onChange={(e) =>
                       handleQuantityChange(Number.parseInt(e.target.value) || 1)
                     }
-                    className="flex w-[50px] items-center text-center p-1 border-y border-solid border-[#2f153c] text-sm md:text-base text-[#2f153c] focus:outline-none"
+                    className="flex w-[3.125rem] items-center text-center p-1 border-y border-solid border-[#2f153c] text-sm md:text-base text-[#2f153c] focus:outline-none"
                   />
                   <button 
                     onClick={() => handleQuantityChange(quantity + 1)}

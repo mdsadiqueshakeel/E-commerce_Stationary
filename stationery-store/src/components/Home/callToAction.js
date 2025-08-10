@@ -38,7 +38,7 @@ const CallToActionSection = () => {
 
             {isSubmitted ? (
               <div className="mt-6 md:mt-8 flex items-center gap-3 bg-[#FFE8CD] text-[#2f153c] p-4 rounded-lg w-full max-w-md animate-fadeIn">
-                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
+                <CheckCircle className="h-1.25rem w-1.25rem sm:h-1.5rem sm:w-1.5rem flex-shrink-0" />
                 <p className="font-semibold">{message}</p>
               </div>
             ) : (
@@ -78,7 +78,7 @@ const CallToActionSection = () => {
               <img
                 src="https://placehold.co/600x400/2f153c/FFFFFF?text=Stationery+Collection"
                 alt="Stationery collection"
-                className="object-cover w-full h-64 sm:h-80 lg:h-[400px] transition-transform duration-700 hover:scale-105 animate-fadeIn"
+                className="object-cover w-full h-64 sm:h-80 lg:h-[25rem] transition-transform duration-700 hover:scale-105 animate-fadeIn"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#2f153c]/30 to-transparent pointer-events-none"></div>
             </div>

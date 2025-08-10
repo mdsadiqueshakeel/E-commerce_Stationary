@@ -3,16 +3,16 @@
 import React from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-import CartContent from "./CartContent";
+import ForgotPasswordContent from "./ForgotPasswordContent";
 
-const CartDesktop = () => {
+const ForgotPasswordDesktop = () => {
   return (
     <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-10">
       <Navbar />
-      <CartContent />
+      <ForgotPasswordContent />
       <Footer />
     </div>
   );
 };
 
-export default CartDesktop;
+export default ForgotPasswordDesktop;

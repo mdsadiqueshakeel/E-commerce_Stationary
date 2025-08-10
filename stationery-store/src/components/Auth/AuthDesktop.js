@@ -3,16 +3,16 @@
 import React from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-import CartContent from "./CartContent";
+import AuthContent from "./AuthContent";
 
-const CartDesktop = () => {
+const AuthDesktop = () => {
   return (
     <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-10">
       <Navbar />
-      <CartContent />
+      <AuthContent />
       <Footer />
     </div>
   );
 };
 
-export default CartDesktop;
+export default AuthDesktop;

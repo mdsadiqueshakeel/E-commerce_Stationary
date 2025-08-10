@@ -55,7 +55,7 @@ const HeaderSection = () => {
   return (
     // --- HEIGHT CHANGE HERE ---
     // I've changed min-h-screen to a more controlled, responsive height.
-    <header className="grid grid-cols-1 lg:grid-cols-2 w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-[90vh] max-h-[800px] min-h-[400px] sm:min-h-[500px] md:min-h-[600px]">
+    <header className="grid grid-cols-1 lg:grid-cols-2 w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-[90vh] max-h-[50rem] min-h-[25rem] sm:min-h-[31.25rem] md:min-h-[37.5rem]">
       
       {/* --- Left Column: Content --- */}
       <div className="bg-gradient-to-b from-[#FFDCDC] to-[#FFD6BA] flex flex-col justify-center items-center p-6 sm:p-10 md:p-16 lg:p-24 text-center lg:text-left h-full">
@@ -87,7 +87,7 @@ const HeaderSection = () => {
 
       {/* --- Right Column: Image Carousel --- */}
       {/* I removed the redundant height classes here to let the parent grid control it. */}
-      <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[90vh] max-h-[800px] min-h-[600px]">
+      <div className="relative flex flex-col bg-gradient-to-b from-[#FFF2EB] to-[#FFE8CD] h-[90vh] max-h-[50rem] min-h-[37.5rem]">
         {/* Image */}
         <div className="flex-grow h-full">
           {/* adding a link to attach with image to redirect to the product detail page */}
@@ -116,7 +116,7 @@ const HeaderSection = () => {
                     key={index}
                     onClick={() => setCurrent(index)}
                     aria-label={`Go to slide ${index + 1}`}
-                    className={`h-2 w-2 rounded-full transition-colors ${
+                    className={`h-0.5rem w-0.5rem rounded-full transition-colors ${
                       current === index ? "bg-[#FFD6BA]" : "bg-[#FFD6BA]/30"
                     }`}
                   />
@@ -129,14 +129,14 @@ const HeaderSection = () => {
                   aria-label="Previous slide"
                   className="p-1.5 sm:p-2 bg-[#FFD6BA]/40 rounded-full hover:bg-[#FFD6BA]/70 focus:bg-[#FFD6BA]/70 transition-colors backdrop-blur-sm hover:scale-110 focus:scale-110 transition-transform duration-300 focus:outline-none text-[#2f153c]"
                 >
-                  <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <ChevronLeft className="h-1.25rem w-1.25rem sm:h-1.5rem sm:w-1.5rem" />
                 </button>
                 <button
                   onClick={handleNext}
                   aria-label="Next slide"
                   className="p-1.5 sm:p-2 bg-[#FFD6BA]/40 rounded-full hover:bg-[#FFD6BA]/70 focus:bg-[#FFD6BA]/70 transition-colors backdrop-blur-sm hover:scale-110 focus:scale-110 transition-transform duration-300 focus:outline-none text-[#2f153c]"
                 >
-                  <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <ChevronRight className="h-1.25rem w-1.25rem sm:h-1.5rem sm:w-1.5rem" />
                 </button>
               </div>
             </div>

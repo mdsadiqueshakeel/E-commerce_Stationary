@@ -61,7 +61,7 @@ const LayoutSection = () => {
           </button>
           <button className="inline-flex items-center justify-center gap-2 text-[#2f153c] font-semibold hover:bg-[#FFE8CD]/70 px-4 py-3 rounded-lg hover:scale-105 transition-all duration-300">
             <span>Sign Up</span>
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-1.25rem h-1.25rem" />
           </button>
         </div>
       </div>

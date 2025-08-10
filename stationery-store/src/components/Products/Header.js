@@ -45,7 +45,7 @@ const HeaderSection = () => {
               className="flex flex-col items-center gap-6 bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <img
-                className="w-full h-48 object-cover rounded-lg"
+                className="w-full h-[12rem] object-cover rounded-lg"
                 alt={`Feature ${feature.id} illustration`}
                 src={feature.image}
               />
@@ -65,7 +65,7 @@ const HeaderSection = () => {
                 >
                   {feature.buttonText}
                   <ChevronRight
-                    className="w-4 h-4"
+                    className="w-[1rem] h-[1rem]"
                     aria-hidden="true"
                   />
                 </button>

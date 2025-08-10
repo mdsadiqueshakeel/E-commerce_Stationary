@@ -176,7 +176,7 @@ const MainContentSection = () => {
             {visibleProducts.map((product) => (
               <article 
                 key={product.id} 
-                className="flex-shrink-0 snap-start w-[280px] sm:w-[320px] md:w-[340px] bg-white/90 backdrop-blur-sm rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
+                className="flex-shrink-0 snap-start w-[17.5rem] sm:w-[20rem] md:w-[21.25rem] bg-white/90 backdrop-blur-sm rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
                 <div className="flex flex-col h-full">
                   {/* Image section with link to product detail */}

@@ -38,16 +38,16 @@ body {
 
 @keyframes fadeOut {
   from { opacity: 1; }
-  to { opacity: 0; transform: translateY(10px); }
+  to { opacity: 0; transform: translateY(0.625rem); }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
+  from { transform: translateY(1.25rem); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes slideDown {
-  from { transform: translateY(-20px); opacity: 0; }
+  from { transform: translateY(-1.25rem); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
