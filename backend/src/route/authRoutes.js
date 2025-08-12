@@ -7,8 +7,8 @@ const router = express.Router();
 router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', logout);
-router.get('/auth/google', googleOAuth);
-router.get('/oauth/google/callback', googleOAuthCallback); // This should handle the callback from Google
+router.get('/google', googleOAuth);
+router.get('/oauth2/google/callback', googleOAuthCallback); // This should handle the callback from Google
 router.get('/me', authMiddleware, me);
 
 module.exports = router;

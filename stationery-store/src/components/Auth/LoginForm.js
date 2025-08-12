@@ -13,7 +13,6 @@ const LoginForm = () => {
   const [redirectPath, setRedirectPath] = useState("/");
 
   useEffect(() => {
-    // Check if there's a redirect parameter in the URL
     const redirect = searchParams.get("redirect");
     if (redirect) {
       setRedirectPath(redirect);
@@ -30,24 +29,25 @@ const LoginForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // This is a placeholder for actual authentication logic
-    // In a real app, you would call your authentication API here
     console.log("Login attempt with:", formData);
-    
-    // Simulate successful login
-    // In a real app, this would happen after API confirmation
+
     localStorage.setItem("auth_token", "dummy_token");
-    
-    // Redirect to the original destination or home page
     router.push(redirectPath);
+  };
+
+  const handleGoogleLogin = () => {
+    // Replace with your backend URL
+    window.location.href = `http://localhost:5000/api/auth/google?redirect=${redirectPath}`;
   };
 
   return (
     <>
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#2f153c] mb-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-[#2f153c] mb-1"
+          >
             Email
           </label>
           <input
@@ -65,7 +65,10 @@ const LoginForm = () => {
 
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label htmlFor="password" className="block text-sm font-medium text-[#2f153c]">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-[#2f153c]"
+            >
               Password
             </label>
             <Link
@@ -112,6 +115,7 @@ const LoginForm = () => {
 
         <div className="mt-6">
           <button
+            onClick={handleGoogleLogin}
             className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 border border-[#2f153c] text-[#2f153c] rounded-lg hover:bg-[#FFE8CD]/70 transition-all duration-200 font-medium"
           >
             <FcGoogle className="h-5 w-5" />
