@@ -72,3 +72,33 @@ enum Role {
   USER
   ADMIN
 }
+
+
+enum ProductStatus {
+  DRAFT
+  NORMAL
+  FEATURED
+}
+
+model Product {
+  id               Int         @id @default(autoincrement())
+  title            String
+  slug             String      @unique
+  description      String?
+  shortDesc        String?
+  price            Float
+  discountPrice    Float?
+  sku              String?      @unique
+  stockQuantity    Int          @default(0)
+  category         String?
+  brand            String?
+  tags             String?
+  images           String?      // JSON array of image URLs
+  status           ProductStatus @default(DRAFT)
+  isActive         Boolean       @default(true)
+  weight           Float?
+  dimensions       String?      // JSON object for dimensions { "length": 0, "width": 0, "height": 0 }
+  createdBy        String?      // User ID of the creator
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}

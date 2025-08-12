@@ -5,7 +5,7 @@ const { signUser } = require('../utils/jwt');
 const { COOKIE_NAME } = require('../config');
 const querystring = require('querystring');
 const jwt = require('jsonwebtoken');
-const { createResetPasswordToken, verifyResetPasswordToken, resetPassword } = require('../utils/reset_password.js');
+const { createResetPasswordToken, verifyResetPasswordToken, resetPassword, sendEmail } = require('../utils/reset_password.js');
 
 const prisma = new PrismaClient();
 const {
@@ -189,39 +189,7 @@ async function googleOAuthCallback(req, res) {
   }
 }
 
-// const ticket = await googleClient.verifyIdToken({
-//   idToken,
-//   audience: process.env.OAUTH_GOOGLE_CLIENT_ID,
-// });
 
-// const payload = ticket.getPayload();
-// const email = payload.email;
-// const name = payload.name;
-// const oauthId = payload.sub;
-
-// Upsert user
-// let user = await prisma.user.findUnique({ where: { email } });
-// if (!user) {
-//   user = await prisma.user.create({
-//     data: {
-//       email,
-//       name,
-//       oauthProvider: 'google',
-//       oauthId,
-//     },
-//     select: { id: true, email: true, name: true, role: true }
-//   });
-// } else {
-//   // ensure oauth fields set if missing
-//   await prisma.user.update({
-//     where: { id: user.id },
-//     data: { oauthProvider: 'google', oauthId },
-//   });
-// }
-
-// const token = signUser(user);
-// res.cookie(COOKIE_NAME, token, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 7 * 24 * 3600 * 1000 });
-// res.json({ user });
 
 async function me(req, res) {
   const userId = req.user?.id;
@@ -247,6 +215,25 @@ async function requestResetPassword(req, res) {
 
     const token = await createResetPasswordToken(user.id);
 
+
+    // Create reset URL
+    const resetUrl = `${FRONTEND_URL}/reset-password?token=${token}`;
+
+    // Email Message
+    const message = `
+      <p>You requested a password reset for your account.</p>
+      <p>Click the link below to reset your password:</p>
+      <a href="${resetUrl}">${resetUrl}</a>
+      <p>This link will expire in 1 hour.</p>
+    `
+
+
+    // Send the email
+    await sendEmail(user.email, 'Password Reset Request', message);
+
+
+    
+
     // Here you would send the token to the user's email
     // For simplicity, we'll just return it in the response
     // In production, you should send this token in an email with a link to reset password
@@ -256,7 +243,7 @@ async function requestResetPassword(req, res) {
      // For now, just return the token in the response
 
 
-    res.json({ message: 'Reset password token created', token });
+    res.json({ message: 'Reset password email sent' });
    } catch (error) {
     console.error('Error requesting password reset:', error);
     res.status(500).json({ error: 'Internal server error' });

@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt'); 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const nodemailer = require('nodemailer');
 
 
 async function createResetPasswordToken(userId) {
@@ -12,6 +13,7 @@ async function createResetPasswordToken(userId) {
             userId,
             token,
             expiresAt: new Date(Date.now() + 60 * 60 * 1000), // Token valid for 1 hour
+            used: false // explicitly mark as unused
         }
     });
 
@@ -54,7 +56,28 @@ async function resetPassword(token, newPassword) {
 }
 
 
+async function sendEmail(to, sunject, htmlContent) {
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: false,   
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+
+    await transporter.sendMail({
+        from: process.env.EMAIL_FROM,
+        to,
+        subject,
+        html: htmlContent
+    });
+
+}
+
 
 module.exports = {
-    createResetPasswordToken, verifyResetPasswordToken, resetPassword
+    createResetPasswordToken, verifyResetPasswordToken, resetPassword, sendEmail
 };
