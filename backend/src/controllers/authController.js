@@ -4,6 +4,8 @@ const { OAuth2Client } = require('google-auth-library');
 const { signUser } = require('../utils/jwt');
 const { COOKIE_NAME } = require('../config');
 const querystring = require('querystring');
+const jwt = require('jsonwebtoken');
+const { createResetPasswordToken, verifyResetPasswordToken, resetPassword } = require('../utils/reset_password.js');
 
 const prisma = new PrismaClient();
 const {
@@ -78,7 +80,7 @@ async function googleOAuth(req, res) {
     prompt: 'consent' // force refresh token; remove if not needed
   }
   
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams(params)}`;
+  const url = `https://accounts.google.com/oauth2/v2/auth?${new URLSearchParams(params)}`;
   console.log(params);
 console.log(url);
   res.redirect(url);
@@ -152,7 +154,7 @@ res.status(400).json({ error: 'No Code provider' });
   const token = jwt.sign( { id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: '5d' });
 
   // Set cookie with JWT
-  res.cookie('token', token, {
+  res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
     sameSite: 'lax',
@@ -169,40 +171,7 @@ res.status(400).json({ error: 'No Code provider' });
 
 
 
-  // const ticket = await googleClient.verifyIdToken({
-  //   idToken,
-  //   audience: process.env.OAUTH_GOOGLE_CLIENT_ID,
-  // });
 
-  // const payload = ticket.getPayload();
-  // const email = payload.email;
-  // const name = payload.name;
-  // const oauthId = payload.sub;
-
-
-  // Upsert user
-  // let user = await prisma.user.findUnique({ where: { email } });
-  // if (!user) {
-  //   user = await prisma.user.create({
-  //     data: {
-  //       email,
-  //       name,
-  //       oauthProvider: 'google',
-  //       oauthId,
-  //     },
-  //     select: { id: true, email: true, name: true, role: true }
-  //   });
-  // } else {
-  //   // ensure oauth fields set if missing
-  //   await prisma.user.update({
-  //     where: { id: user.id },
-  //     data: { oauthProvider: 'google', oauthId },
-  //   });
-  // }
-
-  // const token = signUser(user);
-  // res.cookie(COOKIE_NAME, token, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 7 * 24 * 3600 * 1000 });
-  // res.json({ user });
 
 
 async function me(req, res) {
@@ -216,4 +185,52 @@ async function me(req, res) {
   res.json({ user });
 }
 
-module.exports = { register, login, logout, googleOAuth, googleOAuthCallback, me };
+
+
+// Request password reset - generate token and send email
+async function requestResetPassword(req, res) {
+   try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const token = await createResetPasswordToken(user.id);
+
+    // Here you would send the token to the user's email
+    // For simplicity, we'll just return it in the response
+    // In production, you should send this token in an email with a link to reset password
+
+    // Example: sendEmail(user.email, `Reset your password: ${FRONTEND_URL}/reset-password?token=${token}`);
+
+     // For now, just return the token in the response
+
+
+    res.json({ message: 'Reset password token created', token });
+   } catch (error) {
+    console.error('Error requesting password reset:', error);
+    res.status(500).json({ error: 'Internal server error' });
+   }
+}
+
+// Reset password using token
+async function resetPasswordByEmail(req, res) {
+  try {
+    const { token, newPassword } = req.body;
+    await resetPassword(token, newPassword);
+    res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    if (error.message === 'Invalid token' || error.message === 'Token already used' || error.message === 'Token expired') {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
+
+
+module.exports = { register, login, logout, googleOAuth, googleOAuthCallback, me, requestResetPassword, resetPasswordByEmail };
