@@ -1,11 +1,11 @@
-const bcrypt = require("bcrypt");
-const { PrismaClient } = require("@prisma/client");
-const { OAuth2Client } = require("google-auth-library");
-const { signUser } = require("../utils/jwt");
-const { COOKIE_NAME } = require("../config");
-const querystring = require("querystring");
-const jwt = require("jsonwebtoken");
-const fetch = require("node-fetch");
+const bcrypt = require('bcrypt');
+const { PrismaClient } = require('@prisma/client');
+const { OAuth2Client } = require('google-auth-library');
+const { signUser } = require('../utils/jwt');
+const { COOKIE_NAME } = require('../config');
+const querystring = require('querystring');
+const jwt = require('jsonwebtoken');
+const { createResetPasswordToken, verifyResetPasswordToken, resetPassword } = require('../utils/reset_password.js');
 
 const prisma = new PrismaClient();
 const {
@@ -234,11 +234,52 @@ async function me(req, res) {
   res.json({ user });
 }
 
-module.exports = {
-  register,
-  login,
-  logout,
-  googleOAuth,
-  googleOAuthCallback,
-  me,
-};
+
+
+// Request password reset - generate token and send email
+async function requestResetPassword(req, res) {
+   try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const token = await createResetPasswordToken(user.id);
+
+    // Here you would send the token to the user's email
+    // For simplicity, we'll just return it in the response
+    // In production, you should send this token in an email with a link to reset password
+
+    // Example: sendEmail(user.email, `Reset your password: ${FRONTEND_URL}/reset-password?token=${token}`);
+
+     // For now, just return the token in the response
+
+
+    res.json({ message: 'Reset password token created', token });
+   } catch (error) {
+    console.error('Error requesting password reset:', error);
+    res.status(500).json({ error: 'Internal server error' });
+   }
+}
+
+// Reset password using token
+async function resetPasswordByEmail(req, res) {
+  try {
+    const { token, newPassword } = req.body;
+    await resetPassword(token, newPassword);
+    res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    if (error.message === 'Invalid token' || error.message === 'Token already used' || error.message === 'Token expired') {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
+
+
+module.exports = { register, login, logout, googleOAuth, googleOAuthCallback, me, requestResetPassword, resetPasswordByEmail };
