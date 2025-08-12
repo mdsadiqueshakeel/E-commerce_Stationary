@@ -1,23 +1,67 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Supabase DATABASE_URL
 }
 
 model User {
-    id        Int      @id @default(autoincrement())
-    email     String   @unique
-    password  String
-    firstName String
-    lastName  String
-    role      String   @default("user") // USER, ADMIN
-    provider String    // local, google, facebook
-    providerId String? // ID from the provider user
-    
-    
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String?   // null if OAuth-only account
+  name         String?
+  role         Role      @default(USER)
+  avatarUrl    String?
+  oauthProvider String?  // 'google' etc
+  oauthId      String?   // provider's user id
+  addresses    Address[] 
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  orders       Order[]
+}
+
+
+
+model Address {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  label      String?  // "Home", "Work"
+  fullName   String
+  phone      String
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  postalCode String
+  country    String
+  createdAt  DateTime @default(now())
+}
+
+
+model Order {
+  id         String      @id @default(uuid())
+  user       User        @relation(fields: [userId], references: [id])
+  userId     String
+  items      Json        // Store array of products in JSON format
+  totalPrice Float
+  status     OrderStatus @default(PENDING)
+  paymentId  String?     // Razorpay payment ID
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+// Enum for order status
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum Role {
+  USER
+  ADMIN
 }
