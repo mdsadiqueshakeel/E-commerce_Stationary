@@ -4,6 +4,8 @@ const express = require("express");
 const pool = require("./db.js");
 const cookieParser = require('cookie-parser');
 const authRoutes = require("./route/authRoutes");
+const userRoutes = require("./route/productRoutes/userRouters.js");
+const adminRoutes = require("./route/productRoutes/adminRoutes.js");
 const cors = require('cors');
 const app = express();
 
@@ -17,6 +19,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/products', userRoutes);
+app.use('/api/admin/products', adminRoutes);
 // app.use("/",require('./route/testRoute'));
 
 const PORT = process.env.PORT || 5000;

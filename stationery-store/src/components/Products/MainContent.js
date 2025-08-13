@@ -39,7 +39,14 @@ const MainContentSection = () => {
       );
       setFilteredProducts(filtered);
     }
-  }, [searchQuery]); // Remove products from dependencies
+
+      const token = new URLSearchParams(window.location.search).get("token");
+    if (token) {
+      localStorage.setItem("auth_token", token);
+      // Clean up URL so token isn't visible in browser bar
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [searchQuery,""]); // Remove products from dependencies
 
   // Calculate slides based on screen size
   const productsPerPage = 4;

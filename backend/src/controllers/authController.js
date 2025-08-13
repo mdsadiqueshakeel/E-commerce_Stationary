@@ -19,9 +19,13 @@ const SALT_ROUNDS = 10;
 
 // Register a new user
 async function register(req, res) {
-  const { name, email, password } = req.body;
-  if (!email || !password)
+  try{
+  const { name, email, password, confirmPassword } = req.body;
+  if (!email || !password || !confirmPassword)
     return res.status(400).json({ error: "Email and password required" });
+
+  if (password !== confirmPassword)
+    return res.status(400).json({ error: "Passwords do not match" });
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing)
@@ -42,10 +46,15 @@ async function register(req, res) {
     maxAge: 7 * 24 * 3600 * 1000,
   });
   res.json({ user });
+}catch(error){
+  console.error("Registration failed:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
 }
 
 // Login an existing user
 async function login(req, res) {
+  try{
   const { email, password } = req.body;
   if (!email || !password)
     return res.status(400).json({ error: "Email and password required" });
@@ -68,18 +77,28 @@ async function login(req, res) {
     user: { id: user.id, email: user.email, name: user.name, role: user.role },
     token,
   });
+}catch(error){
+  console.error("Login failed:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
 }
 
 // Logout user by clearing cookie
 async function logout(req, res) {
+  try{
   res.clearCookie(COOKIE_NAME);
   res.json({ ok: true });
+  }catch(error){
+  console.error("Logout failed:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
 }
 
 // Google OAuth id_token flow
 
 // Start Google OAuth - redirect user to Google consent screen
 async function googleOAuth(req, res) {
+  try{
   const params = {
     client_id: GOOGLE_CLIENT_ID,
     redirect_uri: GOOGLE_REDIRECT_URI,
@@ -95,6 +114,10 @@ async function googleOAuth(req, res) {
   console.log(params);
   console.log(url);
   res.redirect(url);
+  }catch(error){
+  console.error("Google OAuth error:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
 }
 
 // Google callback - exchange code for tokens, get profile, upsert user, issue JWT
@@ -180,7 +203,7 @@ async function googleOAuthCallback(req, res) {
     });
 
     // Redirect to frontend with user data(client reads cookie automatically on same domain or wit proper CORS setup)
-    return res.redirect(`${FRONTEND_URL}/product`);
+    return res.redirect(`${FRONTEND_URL}/product?token=${token}`);
   } catch (error) {
     console.error("Google OAuth callback error:", error);
     if (!res.headersSent) {
@@ -192,6 +215,7 @@ async function googleOAuthCallback(req, res) {
 
 
 async function me(req, res) {
+  try{
   const userId = req.user?.id;
   if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
@@ -200,6 +224,10 @@ async function me(req, res) {
     include: { addresses: true },
   });
   res.json({ user });
+}catch(error){
+  console.error("Error fetching user data:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
 }
 
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import Faq from "./Faq";
 import Footer from "../Footer";
 import Header from "./Header";

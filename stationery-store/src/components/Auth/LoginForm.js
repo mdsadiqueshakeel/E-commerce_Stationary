@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
+import apiClient from "@/utils/apiClients";
+import { API_ROUTES } from "@/utils/apiRoutes";
 
 const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [redirectPath, setRedirectPath] = useState("/");
-
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     const redirect = searchParams.get("redirect");
     if (redirect) {
@@ -23,26 +25,54 @@ const LoginForm = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login attempt with:", formData);
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log("Login attempt with:", formData);
 
-    localStorage.setItem("auth_token", "dummy_token");
-    router.push(redirectPath);
+  //   localStorage.setItem("auth_token", "dummy_token");
+  //   router.push(redirectPath);
+  // };
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); // stop default GET request
+    setErrorMessage(""); // clear old error
+
+    try {
+      const response = await apiClient.post(API_ROUTES.auth.login, formData);
+
+      if (response?.token) {
+        localStorage.setItem("auth_token", response.token);
+        router.push(redirectPath);
+      } else {
+        setErrorMessage(error?.response?.data?.error || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setErrorMessage(error?.response?.data?.error || "Invalid credentials");
+    }
   };
 
   const handleGoogleLogin = () => {
     // Replace with your backend URL
     window.location.href = `http://localhost:5000/api/auth/google?redirect=${redirectPath}`;
+    const token = new URLSearchParams(window.location.search).get("token");
+    if (token) localStorage.setItem("auth_token", token);
   };
 
   return (
     <>
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Error message */}
+      {errorMessage && (
+        <div className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
+          {errorMessage}
+        </div>
+      )}
+
+      <form className="space-y-6" onSubmit={handleLogin}>
         <div>
           <label
             htmlFor="email"
@@ -60,6 +90,7 @@ const LoginForm = () => {
             onChange={handleChange}
             className="w-full px-4 py-3 bg-white/80 border border-[#2f153c]/20 rounded-lg focus:ring-2 focus:ring-[#FFD6BA] focus:border-[#FFD6BA] transition-all duration-200"
             placeholder="Enter your email"
+ style={{ textTransform: "lowercase" }}
           />
         </div>
 
