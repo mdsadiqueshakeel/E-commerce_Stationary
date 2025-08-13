@@ -8,6 +8,10 @@ const nodemailer = require('nodemailer');
 async function createResetPasswordToken(userId) {
     const token = crypto.randomBytes(32).toString('hex');
 
+    // console.log("Prisma models available:", Object.keys(prisma));
+    console.log("token:", token);
+    console.log("userId:", userId);
+
     await prisma.resetPasswordToken.create({
         data: {
             userId,
@@ -56,7 +60,7 @@ async function resetPassword(token, newPassword) {
 }
 
 
-async function sendEmail(to, sunject, htmlContent) {
+async function sendEmail(to, subject, htmlContent) {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         host: process.env.EMAIL_HOST,
