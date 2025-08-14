@@ -38,7 +38,7 @@ backend/
 - `POST /api/auth/change-password` - Change password
 
 ### Products (User)
-- `GET /api/products` - List all products
+- `GET /api/products` - List all products and also scrolling and refreshing function
 - `GET /api/products/:id` - Get product details
 - `GET /api/products/category/:category` - Get products by category
 - `GET /api/products/search?query=` - Search products
