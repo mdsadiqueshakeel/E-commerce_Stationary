@@ -29,12 +29,14 @@ model Address {
   label      String?
   fullName   String
   phone      String
+  street     String
   line1      String
   line2      String?
   city       String
   state      String
   postalCode String
   country    String
+  isDefault  Boolean  @default(false)
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -62,32 +64,30 @@ model ResetPasswordToken {
 }
 
 model Product {
-  id              String         @id @default(uuid())
+  id              String         @id @unique @default(uuid())
   title           String
-  slug            String?        @unique
   description     String
   shortDesc       String?
   price           Float
   discountedPrice Float?
-  pdouctCode      String?        @unique
+  productCode     String?        @unique(map: "Product_pdouctCode_key")
   stockQuantity   Int            @default(0)
   categoryId      String?
   brand           String?
   tags            String?
-  images          ProductImage[]
   status          ProductStatus  @default(DRAFT)
   isActive        Boolean        @default(true)
   weight          Float?
-  dimensions      String?        // JSON object for dimensions { length, width, height }
-  createdBy       Int?
+  dimensions      String?
+  createdBy       String
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   publishedAt     DateTime?
   featuredAt      DateTime?
   metaTitle       String?
   metaDescription String?
+  images          ProductImage[]
 }
-
 
 model ProductImage {
   id        String   @id @default(uuid())
@@ -98,7 +98,6 @@ model ProductImage {
   updatedAt DateTime @updatedAt
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
-
 
 enum OrderStatus {
   PENDING
