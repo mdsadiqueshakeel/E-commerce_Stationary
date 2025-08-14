@@ -9,6 +9,7 @@ const adminRoutes = require("./route/productRoutes/adminRoutes.js");
 const addressRoutes = require("./route/addressRoutes.js");
 const cors = require('cors');
 const app = express();
+require('./utils/cleanupToken.js'); // Import the cron job for cleaning expired tokens
 
 app.use(cors({
   origin: 'http://localhost:3000',
@@ -42,6 +43,8 @@ app.get("/test-db", async (req, res) => {
     res.status(500).json({ connected: false, error: err.message });
   }
 });
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

@@ -48,6 +48,13 @@ backend/
 - `DELETE /api/admin/products/:id` - Delete product
 - `GET /api/admin/products/stats` - Get product statistics
 
+
+### Address
+- `GET /api/auth/addresses`  - List all addresses
+- `POST /api/auth/addresses` - Create a address
+- `PUT /api/auth/addresses/:id` - update a address
+- `DELETE /api/auth/addresses/:id` - delete a address
+
 ## Database Schema
 
 ```prisma
@@ -67,6 +74,18 @@ model Product {
   category    String
   stock       Int
   createdAt   DateTime @default(now())
+}
+
+model Address {
+  fullName   String
+  phone      String
+  street     String
+  line1      String
+  city       String
+  state      String
+  postalCode String
+  country    String
+  isDefault  Boolean  @default(false)
 }
 ```
 

@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 const nodemailer = require('nodemailer');
 
 
+
 async function createResetPasswordToken(userId) {
     const token = crypto.randomBytes(32).toString('hex');
 
@@ -80,6 +81,9 @@ async function sendEmail(to, subject, htmlContent) {
     });
 
 }
+
+
+
 
 
 module.exports = {
