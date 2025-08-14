@@ -11,6 +11,4 @@ router.get('/:id', getUserProductsById);      // Endpoint to get a specific prod
 
 
 
-
-
 module.exports = router;
