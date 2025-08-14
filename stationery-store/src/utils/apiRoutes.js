@@ -8,7 +8,7 @@ const API_ROUTES = {
     login: `${BASE_URL}/api/auth/login`,
     signup: `${BASE_URL}/api/auth/register`,
     logout: `${BASE_URL}/api/auth/logout`,
-    forget: `${BASE_URL}/api/auth/forget-password`,
+    forget: `${BASE_URL}/api/auth/request/reset-password`,
     reset: `${BASE_URL}/api/auth/reset-password`,
     googleLogin: `${BASE_URL}/api/auth/google`,
   },
