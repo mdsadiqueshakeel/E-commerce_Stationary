@@ -33,14 +33,21 @@ export const getUserProfile = () => {
 };
 
 /**
- * Save user profile data to localStorage
+ * Save user profile data to localStorage and cookies
  * @param {Object} profileData - User profile data to save
  */
 export const saveUserProfile = (profileData) => {
   if (typeof window === 'undefined') return;
   
   try {
-    localStorage.setItem('user_profile', JSON.stringify(profileData));
+    const profileJson = JSON.stringify(profileData);
+    
+    // Save to localStorage
+    localStorage.setItem('user_profile', profileJson);
+    
+    // Save to cookies for server-side access
+    document.cookie = `user_profile=${profileJson}; path=/; max-age=86400`;
+    
     // Dispatch event to notify other components
     window.dispatchEvent(new Event('userProfileUpdated'));
   } catch (error) {
@@ -49,14 +56,20 @@ export const saveUserProfile = (profileData) => {
 };
 
 /**
- * Log user out by removing auth token and user profile from localStorage
+ * Log user out by removing auth token and user profile from localStorage and cookies
  */
 export const logout = () => {
   if (typeof window === 'undefined') return;
   
   try {
+    // Clear localStorage
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_profile');
+    
+    // Clear cookies
+    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'user_profile=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    
     // Dispatch event to notify other components
     window.dispatchEvent(new Event('userLoggedOut'));
   } catch (error) {
@@ -65,7 +78,7 @@ export const logout = () => {
 };
 
 /**
- * Update specific user profile fields
+ * Update specific user profile fields in both localStorage and cookies
  * @param {Object} updatedFields - Fields to update in the user profile
  */
 export const updateUserProfile = (updatedFields) => {
@@ -74,6 +87,8 @@ export const updateUserProfile = (updatedFields) => {
   try {
     const currentProfile = getUserProfile() || {};
     const updatedProfile = { ...currentProfile, ...updatedFields };
+    
+    // Use saveUserProfile to update both localStorage and cookies
     saveUserProfile(updatedProfile);
   } catch (error) {
     console.error('Error updating user profile:', error);

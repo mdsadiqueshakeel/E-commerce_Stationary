@@ -27,7 +27,7 @@ const API_ROUTES = {
   },
   users: {
     updateProfile: `${BASE_URL}/api/auth/profile`,
-    getProfile: `${BASE_URL}/api/auth/profile`,
+    getProfile: `${BASE_URL}/api/auth/me`,
   },
 };
 

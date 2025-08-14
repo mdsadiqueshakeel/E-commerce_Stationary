@@ -45,10 +45,33 @@ const LoginForm = () => {
       const response = await apiClient.post(API_ROUTES.auth.login, formData);
 
       if (response?.token) {
+        // Store token in localStorage
         localStorage.setItem("auth_token", response.token);
+        
+        // Fetch user profile after successful login
+        try {
+          const profileResponse = await apiClient.get(API_ROUTES.users.getProfile);
+          
+          if (profileResponse?.user) {
+            // Store user profile in localStorage
+            localStorage.setItem("user_profile", JSON.stringify(profileResponse.user));
+            
+            // Store user profile in cookies for server-side access
+            document.cookie = `user_profile=${JSON.stringify(profileResponse.user)}; path=/; max-age=86400`;
+            
+            // Store auth token in cookies for server-side access
+            document.cookie = `auth_token=${response.token}; path=/; max-age=86400`;
+            
+            // Dispatch event to notify other components
+            window.dispatchEvent(new Event('userProfileUpdated'));
+          }
+        } catch (profileError) {
+          console.error("Failed to fetch user profile:", profileError);
+        }
+        
         router.push(redirectPath);
       } else {
-        setErrorMessage(error?.response?.data?.error || "Invalid credentials");
+        setErrorMessage("Invalid credentials");
       }
     } catch (error) {
       console.error("Login failed:", error);

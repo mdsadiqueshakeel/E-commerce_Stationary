@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
 import { getCart } from "../utils/cartUtils";
 import { isLoggedIn, getUserProfile, logout } from "../utils/authUtils";
+import { API_ROUTES } from "@/utils/apiRoutes";
+import apiClient from "@/utils/apiClients";
 
 // --- Reusable SVG Logo ---
 // Replaced the complex, multi-image logo with a single, clean SVG.
@@ -56,13 +58,19 @@ const NavigationBarSection = () => {
   
   // Check user authentication status
   useEffect(() => {
-    const checkAuthStatus = () => {
+    const checkAuthStatus = async () => {
       const loggedIn = isLoggedIn();
       setUserLoggedIn(loggedIn);
       
       if (loggedIn) {
+        // First try to get profile from localStorage
         const profile = getUserProfile();
-        setUserProfile(profile);
+        if (profile) {
+          setUserProfile(profile);
+        } else {
+          // If not available in localStorage, fetch from API
+          await getProfile();
+        }
       } else {
         setIsProfileMenuOpen(false);
       }
@@ -100,12 +108,50 @@ const NavigationBarSection = () => {
     setIsProfileMenuOpen(false);
   };
 
-  const navigationItems = [
-    { label: "Home", href: "/" },
-    { label: "Products", href: "/product" },
-    { label: "About Us", href: "/about-us" },
-  ];
+const getProfile = async () => {
+  try {
+    const response = await apiClient.get(API_ROUTES.users.getProfile);
+    const user = response.user;
+    
+    if (user) {
+      // Save to localStorage and update state
+      localStorage.setItem("user_profile", JSON.stringify(user));
+      setUserProfile(user);
+      
+      // Trigger event to notify other components
+      window.dispatchEvent(new Event('userProfileUpdated'));
+      
+      return user;
+    }
+  } catch (error) {
+    console.error("Failed to fetch user profile:", error);
+    return null;
+  }
+};
 
+// Define base navigation items
+const baseNavigationItems = [
+  { label: "Home", href: "/" },
+  { label: "Products", href: "/product" },
+  { label: "About Us", href: "/about-us" },
+];
+
+// Initialize with base navigation items
+const [navigationItems, setNavigationItems] = useState(baseNavigationItems);
+
+// Update navigation items based on user role
+useEffect(() => {
+  if (userProfile?.role === "ADMIN") {
+    // Add admin link only if user is admin
+    setNavigationItems([
+      ...baseNavigationItems,
+      { label: "Admin Dashboard", href: "/admin" },
+    ]);
+  } else {
+    // Reset to base navigation items for regular users or when logged out
+    setNavigationItems(baseNavigationItems);
+  }
+}, [userProfile]);
   return (
     <nav
       className="bg-[#FFDCDC] backdrop-blur-md shadow-sm fixed top-0 z-50 w-full"
