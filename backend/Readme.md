@@ -35,6 +35,7 @@ backend/
 - `POST /api/auth/reset-password` - Reset password
 - `GET /api/auth/profile` - Get user profile
 - `PUT /api/auth/profile` - Update user profile
+- `POST /api/auth/change-password` - Change password
 
 ### Products (User)
 - `GET /api/products` - List all products

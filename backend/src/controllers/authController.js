@@ -296,5 +296,58 @@ async function resetPasswordByEmail(req, res) {
 
 
 
+// Change password for logged-in user
+async function changePassword(req, res) {
+  const userId = req.user?.id;
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 
-module.exports = { register, login, logout, googleOAuth, googleOAuthCallback, me, requestResetPassword, resetPasswordByEmail };
+  try {
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+    // Check required fields
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+    
+    // Check new password match
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ error: "New passwords do not match" });
+    }
+
+    // Find user by ID
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Current password is incorrect" });
+    }
+
+    // Prevent reusing the same password
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ error: "New password cannot be the same as current password" });
+    }
+
+    // Hash new password
+    const newPasswordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: newPasswordHash },
+    });
+
+    res.json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error during changing password:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+
+
+
+module.exports = { register, login, logout, googleOAuth, googleOAuthCallback, me, requestResetPassword, resetPasswordByEmail, changePassword };
