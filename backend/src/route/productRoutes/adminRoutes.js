@@ -9,7 +9,7 @@ const router = express.Router();
 
 
 router.get("/", authMiddleware, getAdminProducts);
-router.post('/create', authMiddleware, imageSizeLimit, createProduct);
+router.post('/create', authMiddleware, upload.array('images', 5), createProduct);
 router.put('/:id', authMiddleware, updateProduct);
 router.patch('/:id/status', authMiddleware, changeStatus);
 router.delete('/:id/delete', authMiddleware, deleteProduct);

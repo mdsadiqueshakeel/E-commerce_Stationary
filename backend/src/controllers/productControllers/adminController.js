@@ -49,6 +49,7 @@ async function createProduct(req, res) {
     featuredAt,
     metaTitle,
     metaDescription,
+    images: imagesUrls, // This will be used if images are provided in JSON body
   } = req.body;
 
   
@@ -58,17 +59,27 @@ async function createProduct(req, res) {
   }
 
   let images = [];
+  // If images are uploaded via multer, use them
+
   if(req.files && req.files.length > 0) {
-    // If images are uploaded via multer, use them
     images = req.files.map(file => file.location); // Assuming file.location contains the S3
     console.log("Uploaded images:", images);
   }
 
 
+  // If external image URLs provided in JSON body, use them
+  if (imagesUrls && Array.isArray(imagesUrls) && imagesUrls.length > 0) {
+    const urls = imagesUrls.map(img =>  img.image ).filter(Boolean); // Filter out any empty strings
+    
+    images = images.concat(urls); // Combine with uploaded images if any
+  }
   if (images.length === 0) {
     console.log(images.length);
     return res.status(400).json({ error: "No images uploaded or provided" });
   }
+
+  // const images = req.files ? req.files.map(file => file.location) : []; // Use multer's uploaded files if available
+  // console.log("Uploaded images:", images);
 
 
   try {
@@ -86,7 +97,7 @@ async function createProduct(req, res) {
             brand,
             tags,
             images: {
-                create: images.map(image => ({ url: image }))   // loop to create multiple image records
+                create: images.map(url => ({ url }))   // loop to create multiple image records
             },
             status: status || 'DRAFT',
             isActive: isActive !== undefined ? isActive : true,

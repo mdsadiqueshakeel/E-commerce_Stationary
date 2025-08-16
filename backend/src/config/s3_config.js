@@ -22,14 +22,15 @@ const s3 = new aws.S3();
 // Multer storage engine for S3
 const upload = multer({
     storage: multerS3({
-        s3: s3,
+        s3,
         bucket: process.env.S3_BUCKET_NAME,
-        acl: 'public-read', // anyone can view the file (best for product images)
+        acl: 'public-read',     // anyone can view the file (best for product images)
         metadata: (req, file, cb) => {
             cb(null, { fieldName: file.fieldname });
         },
         key: (req, file, cb) => {
-            const uniqueName = (null, Date.now().toString() + '-' + file.originalname);
+            // const uniqueName = (null, Date.now().toString() + '-' + file.originalname);
+            const uniqueName = `${Date.now()}-${file.originalname}`;
             cb(null, `products/${uniqueName}`); // store insed products/ folder in S3
         },
     }),
