@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function getAdminProducts(req, res) {
   try {
     const items = await prisma.product.findMany({
-      orderBy: {
+        orderBy: {
         createdAt: "desc",
       },
     });
@@ -22,6 +22,11 @@ async function getAdminProducts(req, res) {
   }
 }
 
+
+
+
+
+
 // Admin-only: create a new product
 async function createProduct(req, res) {
   const {
@@ -36,21 +41,35 @@ async function createProduct(req, res) {
     categoryId,
     brand,
     tags,
-    images,
     status,
     isActive,
     weight,
     dimensions,
-    createdBy,
     publishedAt,
     featuredAt,
     metaTitle,
     metaDescription,
   } = req.body;
 
-  if (!title || !description || !price || !images) {
+  
+  if (!title || !description || !price) {
+    console.log(title, description, price);
     return res.status(400).json({ error: "Missing required fields" });
   }
+
+  let images = [];
+  if(req.files && req.files.length > 0) {
+    // If images are uploaded via multer, use them
+    images = req.files.map(file => file.location); // Assuming file.location contains the S3
+    console.log("Uploaded images:", images);
+  }
+
+
+  if (images.length === 0) {
+    console.log(images.length);
+    return res.status(400).json({ error: "No images uploaded or provided" });
+  }
+
 
   try {
     const newproduct = await prisma.product.create({
