@@ -1,4 +1,6 @@
+const { uploadToS3 } = require("../../config/s3_config");
 const { PrismaClient } = require("@prisma/client");
+const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
 const prisma = new PrismaClient();
 
@@ -49,7 +51,7 @@ async function createProduct(req, res) {
     featuredAt,
     metaTitle,
     metaDescription,
-    images: imagesUrls, // This will be used if images are provided in JSON body
+    images: imagesUrls,  // Optional external image URLs
   } = req.body;
 
   
@@ -59,11 +61,23 @@ async function createProduct(req, res) {
   }
 
   let images = [];
+  
   // If images are uploaded via multer, use them
-
   if(req.files && req.files.length > 0) {
-    images = req.files.map(file => file.location); // Assuming file.location contains the S3
+    try {
+      for (const file of req.files) {
+        const key = `products/${Date.now()}_${file.originalname}`;
+        const result = await uploadToS3(file, key);
+
+        const location = result.Location  || `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${key}`;
+
+        images.push(location);
+    }
     console.log("Uploaded images:", images);
+    } catch (error) {
+      console.error("Error uploading images to S3:", error);
+      return res.status(500).json({ error: "Error uploading images" });
+    }
   }
 
 
@@ -78,8 +92,6 @@ async function createProduct(req, res) {
     return res.status(400).json({ error: "No images uploaded or provided" });
   }
 
-  // const images = req.files ? req.files.map(file => file.location) : []; // Use multer's uploaded files if available
-  // console.log("Uploaded images:", images);
 
 
   try {
@@ -100,7 +112,7 @@ async function createProduct(req, res) {
                 create: images.map(url => ({ url }))   // loop to create multiple image records
             },
             status: status || 'DRAFT',
-            isActive: isActive !== undefined ? isActive : true,
+            isActive: isActive === "true" || isActive === true, // convert string to boolean
             weight: weight ? Number(weight) : null,
             dimensions,
             createdBy: req.user.id,
@@ -127,12 +139,16 @@ async function createProduct(req, res) {
 
 
 
+
+
+
 // Update product (Admin)
 async function updateProduct(req, res) {
     const { id } = req.params;
     const data = { ...req.body };
 
     if (!data.title || !data.description || !data.price || !data.images) {
+      console.log(data.title, data.description, data.price, data.images);
         return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -143,10 +159,65 @@ async function updateProduct(req, res) {
         if (data.stockQuantity) data.stockQuantity = Number(data.stockQuantity);
         if (data.weight) data.weight = Number(data.weight);
 
-        // Handle images as an array of objects
-        if (data.images && Array.isArray(data.images)) {
-            data.images = data.images.map(image => ({ url: image }));
+        
+        // Handle images upload (from multer)
+        let images = [];
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const key = `products/${Date.now()}_${file.originalname}`;
+                const result = await uploadToS3(file, key);
+
+                const location = result.Location || `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${key}`;
+
+                images.push(location);
+            }
         }
+
+        // Handle additional URLs (from req.body.imagesUrls)
+        if (data.imagesUrls && Array.isArray(data.imagesUrls) && data.imagesUrls.length > 0) {
+            const urls = data.imagesUrls.map(img => img.image).filter(Boolean); // Filter out any empty strings
+            images = images.concat(urls); // Combine with uploaded images if any 
+        }
+
+
+        // If new images uploaded -> delete old images (DB + S3) and add new ones
+        if (images.length > 0) {
+          // Find old images in DB
+          const oldImages = await prisma.image.findMany({
+            where: { productId: id },
+          });
+
+          // Delete old images from S3
+          for (const img of oldImages) {
+            try {
+              const url = new URL(img.url);
+              // extract key after bucket host
+              const key = url.pathname.substring(1); // Remove leading slash
+              await s3.send(new DeleteObjectCommand({
+                Bucket: process.env.S3_BUCKET_NAME,
+                Key: key,
+              }));
+              console.log(`Deleted old image from S3: ${key}`)
+            } catch (error) {
+              console.error(`Error deleting old image from S3: ${error.message}`);
+              console.error(`Could not delete image: ${img.url}`);
+            }
+          }
+
+
+        // Remove old images from DB
+        await prisma.image.deleteMany({
+            where: { productId: id },
+        });
+
+        // Add new images to DB
+        data.images = {
+            create: images.map(url => ({ url }))   // loop to create multiple image records
+        };
+      }
+
+
+
 
         // Validate description length
         if(data.description && data.description.length > 500) {
