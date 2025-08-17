@@ -10,14 +10,19 @@ async function getUserProducts(req, res) {
         let  { mode, lastCreatedAt, limit } = req.query;
         limit = parseInt(limit) || 12;       // Default to 12 if not provided
 
+        const baseWhere = { status: { in: ['NORMAL', 'FEATURE'] } };
+
         let items = [];
 
+        // Default mode: return all products
         if (!mode) {
-            // Default mode: return all products
             items = await prisma.product.findMany({
-                where: { status: { in: ['NORMAL', 'FEATURE'] } },
+                where: baseWhere,
                 orderBy: { createdAt: 'desc' },
-                take: limit
+                take: limit,
+                include: {
+                    images: true,
+                }
             });
 
         
@@ -27,7 +32,7 @@ async function getUserProducts(req, res) {
 
             return res.json({
                 mode: 'default',
-                items,
+                items: formatProductWithS3(items),
                 count: items.length
             });
         }
@@ -37,11 +42,14 @@ async function getUserProducts(req, res) {
         if (mode === 'scroll' && lastCreatedAt) {
             items = await prisma.product.findMany({
                 where: {
-                    status: { in: ['NORMAL', 'FEATURE'] },
+                    ...baseWhere,
                     createdAt: { lt: new Date(lastCreatedAt) }   // older than lastCreatedAt
                 },
                 orderBy: { createdAt: 'desc' },
-                take: limit
+                take: limit,
+                include: {
+                    images: true,
+                },
             });
 
             if (!items || items.length === 0) {
@@ -50,7 +58,7 @@ async function getUserProducts(req, res) {
 
             return res.json({
                 mode: 'scroll',
-                items,
+                items: formatProductWithS3(items),
                 count: items.length
             });
         }
@@ -60,19 +68,25 @@ async function getUserProducts(req, res) {
         if (mode === 'refresh' && lastCreatedAt) {
             items = await prisma.product.findMany({
                 where: {
-                    status: { in: ['NORMAL', 'FEATURE'] },
+                    ...baseWhere,
                     createdAt: { gt: new Date(lastCreatedAt) }   // newer than lastCreatedAt
                 },
                 orderBy: { createdAt: 'desc' },
+                include: {
+                    images: true,
+                },
             });
 
 
             // If no new items, return latest 12 products
             if (items.length === 0) {
                 items = await prisma.product.findMany({
-                    where: { status: { in: ['NORMAL', 'FEATURE'] } },
+                    where: baseWhere,
                     orderBy: { createdAt: 'desc' },
-                    take: limit
+                    take: limit,
+                    include: {
+                        images: true,
+                    },
                 });
             }
 
@@ -82,7 +96,7 @@ async function getUserProducts(req, res) {
 
             return res.json({
                 mode: 'refresh',
-                items,
+                items: formatProductWithS3(items),
                 count: items.length
             });
         }
@@ -98,6 +112,19 @@ async function getUserProducts(req, res) {
 
 
 
+// Helper function to construct S3 URL for images
+function formatProductWithS3(products) {
+    return products.map((product) => ({
+        ...product,
+        images: product.images.map((img) => ({
+            ...img,
+            url: img.url.startsWith("http") ? img.url : `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${img.url}`
+        })),
+    }));
+}
+
+
+
 
 
 
@@ -109,8 +136,7 @@ async function getUserProductsById(req, res) {
         const item = await prisma.product.findUnique({
             where: { id },
             include: {
-                category: true,
-                user: true
+                images: true,
             }
         });
 
@@ -120,12 +146,22 @@ async function getUserProductsById(req, res) {
 
             if(item.status === 'DRAFT') {
                 const auth = req.headers.authorization;
-                if(!auth || !auth.startsWith('Bearer ')) {
+                if(!auth || !auth.startsWith('Bearer')) {
                     return res.status(403).json({ error: "Forbidden: Product is not found" });
                 }
             }
 
-        res.json({ item });
+            
+                const itemWithImages = {
+                    ...item,
+                    images: item.images.map(img => ({
+                        ...img,
+                        url: img.url.startsWith("http") ? img.url : `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${img.url}`
+                    }))
+                };
+            
+
+        res.json({ itemWithImages });
     } catch (error) {
         console.error("Error fetching product by ID:", error);
         res.status(500).json({ error: "Internal server error" });
