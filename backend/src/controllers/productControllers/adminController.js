@@ -11,13 +11,25 @@ async function getAdminProducts(req, res) {
         orderBy: {
         createdAt: "desc",
       },
+      include: {
+        images: true,  // Include images in the response
+      },
     });
 
     if (!items || items.length === 0) {
       return res.status(404).json({ message: "No products found" });
     }
 
-    res.json(items);
+    // Always construct S3 URLs for images
+    const productsWithImages = items.map(product => ({
+      ...product,
+      images: product.images.map(img => ({
+        ...img,
+        url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${img.url}`
+      }))
+    }));
+
+    res.json(productsWithImages);
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({ message: "Internal server error" });
