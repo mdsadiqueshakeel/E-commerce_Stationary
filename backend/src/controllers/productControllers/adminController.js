@@ -1,4 +1,4 @@
-const { uploadToS3 } = require("../../config/s3_config");
+const { uploadToS3, s3 } = require("../../config/s3_config");
 const { PrismaClient } = require("@prisma/client");
 const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
@@ -147,7 +147,7 @@ async function updateProduct(req, res) {
     const { id } = req.params;
     const data = { ...req.body };
 
-    if (!data.title || !data.description || !data.price || !data.images) {
+    if (!data.title || !data.description || !data.price) {
       console.log(data.title, data.description, data.price, data.images);
         return res.status(400).json({ error: "Missing required fields" });
     }
@@ -288,6 +288,39 @@ async function deleteProduct(req, res) {
   const { id } = req.params;
 
   try {
+    // Find Product with images
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { images: true },
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Delete images from S3
+    for (const img of product.images) {
+      try {
+        const key = img.url.split('.com/')[1];   // Extract S3 key from URL
+        await s3.send(new DeleteObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: key,
+        }));
+        console.log(`Deleted image from S3: ${key}`);
+      } catch (error) {
+        console.error(`Error deleting image from S3: ${error.message}`);
+        console.error(`Could not delete image: ${img.url}`);
+      }
+    }
+
+
+    // Delete images from DB
+    await prisma.productImage.deleteMany({
+      where: { productId: id },
+    });
+
+
+    // Delete product from DB
     const deleteProduct = await prisma.product.delete({
       where: { id },
     });
