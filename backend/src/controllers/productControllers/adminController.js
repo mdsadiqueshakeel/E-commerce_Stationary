@@ -1,6 +1,7 @@
 const { uploadToS3, s3 } = require("../../config/s3_config");
 const { PrismaClient } = require("@prisma/client");
 const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { DeleteObjectsCommand } = require('@aws-sdk/client-s3');
 
 const prisma = new PrismaClient();
 
@@ -291,12 +292,19 @@ async function changeStatus(req, res) {
 }
 
 
-// Delete product (Admin)
+
+
+
+
+
+
+// Delete Product (Admin)
+// Delete product + images (DB + S3)
 async function deleteProduct(req, res) {
   const { id } = req.params;
 
   try {
-    // Find Product with images
+    // Find product with images
     const product = await prisma.product.findUnique({
       where: { id },
       include: { images: true },
@@ -306,45 +314,51 @@ async function deleteProduct(req, res) {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    // Delete images from S3
-    for (const img of product.images) {
-      try {
-        const key = img.url.split('.com/')[1];   // Extract S3 key from URL
-        await s3.send(new DeleteObjectCommand({
+    // ---- Delete images from S3 ----
+    if (product.images.length > 0) {
+      // Collect keys
+      const keys = product.images.map((img) => {
+        // Extract key from URL
+        return {
+          Key: img.url.includes(".amazonaws.com/")
+            ? img.url.split(".amazonaws.com/")[1]
+            : img.url,
+        };
+      });
+
+      // Send batch delete
+      await s3.send(
+        new DeleteObjectsCommand({
           Bucket: process.env.S3_BUCKET_NAME,
-          Key: key,
-        }));
-        console.log(`Deleted image from S3: ${key}`);
-      } catch (error) {
-        console.error(`Error deleting image from S3: ${error.message}`);
-        console.error(`Could not delete image: ${img.url}`);
-      }
+          Delete: { Objects: keys },
+        })
+      );
+
+      console.log("✅ Deleted images from S3:", keys);
     }
 
-
-    // Delete images from DB
+    // ---- Delete images from DB ----
     await prisma.productImage.deleteMany({
       where: { productId: id },
     });
 
-
-    // Delete product from DB
-    const deleteProduct = await prisma.product.delete({
+    // ---- Delete product from DB ----
+    const deletedProduct = await prisma.product.delete({
       where: { id },
     });
-    res.json({
-      message: "Product deleted successfully",
-      product: deleteProduct,
+
+    return res.json({
+      message: "Product and images deleted successfully",
+      product: deletedProduct,
     });
   } catch (error) {
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return res.status(404).json({ error: "Product not found" });
     }
-    console.error("Error deleting product:", error);
+    console.error("❌ Error deleting product:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
-
 
     
 
