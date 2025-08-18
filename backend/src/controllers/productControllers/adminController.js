@@ -159,10 +159,6 @@ async function updateProduct(req, res) {
     const { id } = req.params;
     const data = { ...req.body };
 
-    if (!data.title || !data.description || !data.price) {
-      console.log(data.title, data.description, data.price, data.images);
-        return res.status(400).json({ error: "Missing required fields" });
-    }
 
     try {
         // Convert numeric fields to numbers
