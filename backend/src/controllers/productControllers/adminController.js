@@ -158,22 +158,58 @@ async function createProduct(req, res) {
 // Update product (Admin)
 async function updateProduct(req, res) {
     const { id } = req.params;
-    // Create a clean copy of the data without imagesUrls
-    const { imagesUrls, ...cleanData } = { ...req.body };
     
     console.log("Update request body:", req.body);
+    
+    // Handle FormData properly - don't destructure directly as it can cause issues
+    const cleanData = {};
+    
+    // Ensure req.body exists before trying to iterate over it
+    if (req.body) {
+        // Copy all fields except imagesUrls (which we'll handle separately)
+        for (const key in req.body) {
+            if (key !== 'imagesUrls') {
+                cleanData[key] = req.body[key];
+            }
+        }
+    } else {
+        console.log("Warning: req.body is undefined");
+    }
+    
     console.log("Clean data for Prisma:", cleanData);
 
     try {
         // Convert numeric fields to numbers
         if (cleanData.price) cleanData.price = Number(cleanData.price);
-        if (cleanData.discountedPrice) cleanData.discountedPrice = Number(cleanData.discountedPrice);
+        if (cleanData.discountedPrice) {
+            if (cleanData.discountedPrice === "null") {
+                cleanData.discountedPrice = null;
+            } else {
+                cleanData.discountedPrice = Number(cleanData.discountedPrice);
+            }
+        }
         if (cleanData.stockQuantity) cleanData.stockQuantity = Number(cleanData.stockQuantity);
         if (cleanData.weight) cleanData.weight = Number(cleanData.weight);
+        
+        // Convert boolean fields from strings to actual booleans
+        if (cleanData.isActive !== undefined) {
+            cleanData.isActive = cleanData.isActive === "true" || cleanData.isActive === true;
+        }
+        
+        // Handle date fields - convert "null" strings to actual null values
+        if (cleanData.publishedAt === "null") cleanData.publishedAt = null;
+        if (cleanData.featuredAt === "null") cleanData.featuredAt = null;
+        
+        // Handle other string "null" values that should be actual null
+        if (cleanData.categoryId === "null") cleanData.categoryId = null;
+        if (cleanData.dimensions === "null") cleanData.dimensions = null;
+        if (cleanData.metaTitle === "null") cleanData.metaTitle = null;
+        if (cleanData.metaDescription === "null") cleanData.metaDescription = null;
 
         // Handle images upload (from multer)
         let images = [];
         if (req.files && req.files.length > 0) {
+            console.log("Processing uploaded files:", req.files.length);
             for (const file of req.files) {
                 const key = `products/${Date.now()}_${file.originalname}`;
                 const result = await uploadToS3(file, key);
@@ -182,35 +218,56 @@ async function updateProduct(req, res) {
 
                 images.push(location);
             }
+            console.log("Uploaded new images:", images);
+        } else {
+            console.log("No files uploaded in this request");
         }
 
-        // Handle additional URLs (from req.body.imagesUrls)
+        // Handle existing image URLs from request body
+        let imagesUrls = undefined;
+        if (req.body) {
+            imagesUrls = req.body.imagesUrls;
+        }
+        console.log("Received imagesUrls:", imagesUrls);
+        
         if (imagesUrls) {
-            let parsedUrls;
+            let parsedUrls = [];
             
             // Handle different formats of imagesUrls
             if (typeof imagesUrls === 'string') {
                 try {
+                    // Try to parse as JSON
                     parsedUrls = JSON.parse(imagesUrls);
+                    console.log("Successfully parsed imagesUrls as JSON:", parsedUrls);
                 } catch (e) {
-                    parsedUrls = [imagesUrls];
+                    // If parsing fails, treat as a single URL
+                    console.log("Failed to parse imagesUrls as JSON, treating as single URL:", e.message);
+                    if (imagesUrls.trim()) {
+                        parsedUrls = [imagesUrls];
+                    }
                 }
             } else if (Array.isArray(imagesUrls)) {
+                // Already an array
                 parsedUrls = imagesUrls;
+                console.log("imagesUrls is already an array");
             }
             
-            if (parsedUrls && Array.isArray(parsedUrls)) {
-                // Extract URLs properly based on format
+            if (Array.isArray(parsedUrls)) {
+                // Extract URLs properly based on format and clean them
                 const urls = parsedUrls.map(img => {
                     if (typeof img === 'object' && img.image) return img.image;
+                    if (typeof img === 'string') return img.trim().replace(/`/g, '');
                     return img;
-                }).filter(Boolean);
+                }).filter(Boolean); // Filter out any empty/null values
                 
+                console.log("Processed existing image URLs:", urls);
                 images = images.concat(urls);
             }
         }
 
-        // If new images uploaded -> delete old images (DB + S3) and add new ones
+        console.log("Final combined images array:", images);
+
+        // If we have any images (new uploads or existing URLs)
         if (images.length > 0) {
             // Find old images in DB
             const oldImages = await prisma.productImage.findMany({
@@ -243,6 +300,9 @@ async function updateProduct(req, res) {
             cleanData.images = {
                 create: images.map(url => ({ url }))   // loop to create multiple image records
             };
+        } else {
+            console.log("No images found in the request");
+            return res.status(400).json({ error: "At least one product image is required" });
         }
 
         // Validate description length
