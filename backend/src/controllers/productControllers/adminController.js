@@ -158,17 +158,19 @@ async function createProduct(req, res) {
 // Update product (Admin)
 async function updateProduct(req, res) {
     const { id } = req.params;
-    const data = { ...req.body };
-
+    // Create a clean copy of the data without imagesUrls
+    const { imagesUrls, ...cleanData } = { ...req.body };
+    
+    console.log("Update request body:", req.body);
+    console.log("Clean data for Prisma:", cleanData);
 
     try {
         // Convert numeric fields to numbers
-        if (data.price) data.price = Number(data.price);
-        if (data.discountedPrice) data.discountedPrice = Number(data.discountedPrice);
-        if (data.stockQuantity) data.stockQuantity = Number(data.stockQuantity);
-        if (data.weight) data.weight = Number(data.weight);
+        if (cleanData.price) cleanData.price = Number(cleanData.price);
+        if (cleanData.discountedPrice) cleanData.discountedPrice = Number(cleanData.discountedPrice);
+        if (cleanData.stockQuantity) cleanData.stockQuantity = Number(cleanData.stockQuantity);
+        if (cleanData.weight) cleanData.weight = Number(cleanData.weight);
 
-        
         // Handle images upload (from multer)
         let images = [];
         if (req.files && req.files.length > 0) {
@@ -183,59 +185,76 @@ async function updateProduct(req, res) {
         }
 
         // Handle additional URLs (from req.body.imagesUrls)
-        if (data.imagesUrls && Array.isArray(data.imagesUrls) && data.imagesUrls.length > 0) {
-            const urls = data.imagesUrls.map(img => img.image).filter(Boolean); // Filter out any empty strings
-            images = images.concat(urls); // Combine with uploaded images if any 
+        if (imagesUrls) {
+            let parsedUrls;
+            
+            // Handle different formats of imagesUrls
+            if (typeof imagesUrls === 'string') {
+                try {
+                    parsedUrls = JSON.parse(imagesUrls);
+                } catch (e) {
+                    parsedUrls = [imagesUrls];
+                }
+            } else if (Array.isArray(imagesUrls)) {
+                parsedUrls = imagesUrls;
+            }
+            
+            if (parsedUrls && Array.isArray(parsedUrls)) {
+                // Extract URLs properly based on format
+                const urls = parsedUrls.map(img => {
+                    if (typeof img === 'object' && img.image) return img.image;
+                    return img;
+                }).filter(Boolean);
+                
+                images = images.concat(urls);
+            }
         }
-
 
         // If new images uploaded -> delete old images (DB + S3) and add new ones
         if (images.length > 0) {
-          // Find old images in DB
-          const oldImages = await prisma.image.findMany({
-            where: { productId: id },
-          });
+            // Find old images in DB
+            const oldImages = await prisma.productImage.findMany({
+                where: { productId: id },
+            });
 
-          // Delete old images from S3
-          for (const img of oldImages) {
-            try {
-              const url = new URL(img.url);
-              // extract key after bucket host
-              const key = url.pathname.substring(1); // Remove leading slash
-              await s3.send(new DeleteObjectCommand({
-                Bucket: process.env.S3_BUCKET_NAME,
-                Key: key,
-              }));
-              console.log(`Deleted old image from S3: ${key}`)
-            } catch (error) {
-              console.error(`Error deleting old image from S3: ${error.message}`);
-              console.error(`Could not delete image: ${img.url}`);
+            // Delete old images from S3
+            for (const img of oldImages) {
+                try {
+                    const url = new URL(img.url);
+                    // extract key after bucket host
+                    const key = url.pathname.substring(1); // Remove leading slash
+                    await s3.send(new DeleteObjectCommand({
+                        Bucket: process.env.S3_BUCKET_NAME,
+                        Key: key,
+                    }));
+                    console.log(`Deleted old image from S3: ${key}`)
+                } catch (error) {
+                    console.error(`Error deleting old image from S3: ${error.message}`);
+                    console.error(`Could not delete image: ${img.url}`);
+                }
             }
-          }
 
+            // Remove old images from DB
+            await prisma.productImage.deleteMany({
+                where: { productId: id },
+            });
 
-        // Remove old images from DB
-        await prisma.image.deleteMany({
-            where: { productId: id },
-        });
-
-        // Add new images to DB
-        data.images = {
-            create: images.map(url => ({ url }))   // loop to create multiple image records
-        };
-      }
-
-
-
+            // Add new images to DB
+            cleanData.images = {
+                create: images.map(url => ({ url }))   // loop to create multiple image records
+            };
+        }
 
         // Validate description length
-        if(data.description && data.description.length > 500) {
+        if(cleanData.description && cleanData.description.length > 500) {
             return res.status(400).json({ error: "Description is too long" });
         }
 
+        console.log("Final data for Prisma update:", cleanData);
+
         const updatedProduct = await prisma.product.update({
             where: { id },
-            data,
+            data: cleanData,
             include: { images: true },
         });
 
@@ -251,7 +270,6 @@ async function updateProduct(req, res) {
         res.status(500).json({ error: "Internal server error" });
     }
 }
-
 
 
 

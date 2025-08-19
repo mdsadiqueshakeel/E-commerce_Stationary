@@ -26,47 +26,47 @@ model User {
 model Address {
   id         String   @id @default(uuid())
   userId     String
-  order      Order[]
   label      String?
   fullName   String
   phone      String
-  street     String
   line1      String
   line2      String?
   city       String
   state      String
   postalCode String
   country    String
-  isDefault  Boolean  @default(false)
   createdAt  DateTime @default(now())
+  isDefault  Boolean  @default(false)
+  street     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order      Order[]
 }
 
 model Order {
-  id              String          @id @default(uuid())
-  userId          String
-  items           OrderItem[]
-  addressId       String
-  status          OrderStatus     @default(PENDING)
-  fulfillment     FulfillmentType @default(SHIPPING)
-  totalAmount     Float
-  shippingAddr    String?
-  paymentMethod   PaymentMethod
-  paymentStatus   PaymentStatus   @default(PENDING)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  user            User            @relation(fields: [userId], references: [id])
-  address         Address?        @relation(fields: [addressId], references: [id])
+  id            String          @id @default(uuid())
+  userId        String
+  status        OrderStatus     @default(PENDING)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  addressId     String
+  fulfillment   FulfillmentType @default(SHIPPING)
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus   @default(PENDING)
+  shippingAddr  String?
+  totalAmount   Float
+  address       Address         @relation(fields: [addressId], references: [id])
+  user          User            @relation(fields: [userId], references: [id])
+  items         OrderItem[]
 }
 
 model OrderItem {
-  id              String          @id @default(uuid())
-  orderId         String
-  productId       String
-  quantity        Int
-  price           Float
-  order           Order           @relation(fields: [orderId], references: [id])
-  product         Product         @relation(fields: [productId], references: [id])
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model ResetPasswordToken {
@@ -102,8 +102,8 @@ model Product {
   featuredAt      DateTime?
   metaTitle       String?
   metaDescription String?
-  images          ProductImage[]
   orderItem       OrderItem[]
+  images          ProductImage[]
 }
 
 model ProductImage {
@@ -118,10 +118,10 @@ model ProductImage {
 
 enum OrderStatus {
   PENDING
-  PROCESSING
   SHIPPED
   DELIVERED
   CANCELLED
+  PROCESSING
 }
 
 enum Role {

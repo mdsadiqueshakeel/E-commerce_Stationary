@@ -201,95 +201,148 @@ const ProductFormModal = ({
       setIsSubmitting(false);
       return;
     }
-
-    const submissionData = new FormData();
     
-    // Log all form data for debugging
-    console.log("Form data being submitted:", formData);
-    console.log("discountedPrice type:", typeof formData.discountedPrice, "value:", formData.discountedPrice);
-    
-    // Handle numeric fields with special attention to discountedPrice
-    submissionData.append('price', Number(formData.price));
-    
-    // For discountedPrice, we need to ensure it's properly sent
-    // The backend only converts it if it exists in the data
-    if (formData.discountedPrice === "" || formData.discountedPrice === null || formData.discountedPrice === undefined) {
-      // For empty/null values, explicitly set to null string
-      console.log("Setting discountedPrice to 'null' string");
-      submissionData.append('discountedPrice', 'null');
-    } else {
-      const discountValue = Number(formData.discountedPrice);
-      console.log("Setting discountedPrice to", discountValue);
-      submissionData.append('discountedPrice', discountValue.toString());
-    }
-    
-    submissionData.append('stockQuantity', Number(formData.stockQuantity));
-    
-    // Add all other fields
-    for (const key in formData) {
-      // Skip the numeric fields we already handled
-      if (key === 'price' || key === 'discountedPrice' || key === 'stockQuantity') {
-        continue;
-      }
-      
-      if (formData[key] !== null && formData[key] !== undefined) {
-        submissionData.append(key, formData[key]);
-      }
-    }
-    
-    // Add new image files
-    imageFiles.forEach((file) => {
-      submissionData.append("images", file);
-    });
-    
-    // For edit mode, include existing image URLs that weren't removed
-    if (mode === "edit") {
-      // Get only the existing URLs that are still in the previews (not removed)
-      const remainingExistingUrls = imagePreviews
-        .filter(url => !url.startsWith('blob:') && existingImageUrls.includes(url));
-      
-      console.log("Remaining existing images:", remainingExistingUrls);
-      
-      // Always send the imagesUrls array, even if empty
-      // This ensures the backend knows to remove all images if none remain
-      submissionData.append("imagesUrls", JSON.stringify(remainingExistingUrls));
-    }
-
     try {
-      // Log the form data being submitted for debugging
-      console.log("Submitting form data:", {
-        mode,
-        id: formData.id,
-        title: formData.title,
-        price: formData.price,
-        discountedPrice: formData.discountedPrice,
-        imageCount: imageFiles.length,
-        previewCount: imagePreviews.length
-      });
-      
-      // Log FormData contents for debugging
-      console.log("FormData contents:");
-      for (let pair of submissionData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-      }
-      
       let response;
+      
       if (mode === "add") {
-        response = await apiClient.post(API_ROUTES.products.create, submissionData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      } else {
-        // For update, ensure we have the correct ID and endpoint
-        const updateUrl = API_ROUTES.products.update(formData.id);
-        console.log("Update URL:", updateUrl);
+        // For create, we need all fields and FormData for file uploads
+        const submissionData = new FormData();
         
-        response = await apiClient.put(
-          updateUrl,
-          submissionData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
+        // Create a clean copy with proper type conversions for create
+        const cleanedFormData = {
+          ...formData,
+          price: Number(formData.price),
+          stockQuantity: Number(formData.stockQuantity),
+          discountedPrice: formData.discountedPrice === "" || formData.discountedPrice === null 
+            ? null 
+            : Number(formData.discountedPrice)
+        };
+        
+        // Add all form fields
+        for (const key in cleanedFormData) {
+          if (cleanedFormData[key] !== undefined) {
+            if (key === 'discountedPrice' && cleanedFormData[key] === null) {
+              // Skip null discountedPrice for create
+              continue;
+            }
+            submissionData.append(key, cleanedFormData[key]);
           }
+        }
+        
+        // Add image files
+        imageFiles.forEach((file) => {
+          submissionData.append("images", file);
+        });
+        
+        console.log("Creating new product...");
+        response = await apiClient.post(
+          API_ROUTES.products.create, 
+          submissionData, 
+          { headers: { "Content-Type": "multipart/form-data" } }
         );
+        console.log("Create response:", response);
+      } else {
+        // For update, only send changed fields
+        // First, handle the existing images
+        const remainingExistingUrls = imagePreviews
+          .filter(url => !url.startsWith('blob:') && existingImageUrls.includes(url));
+        
+        console.log("Remaining existing images:", remainingExistingUrls);
+        
+        // If we have new image files, we need to use FormData
+        if (imageFiles.length > 0) {
+          const submissionData = new FormData();
+          
+          // Only include the ID and changed fields
+          submissionData.append("id", formData.id);
+          
+          // Handle numeric fields specially
+          if (formData.price) submissionData.append("price", Number(formData.price));
+          if (formData.stockQuantity) submissionData.append("stockQuantity", Number(formData.stockQuantity));
+          
+          // Handle discountedPrice specially
+          if (formData.discountedPrice === "" || formData.discountedPrice === null) {
+            submissionData.append("discountedPrice", "null");
+          } else if (formData.discountedPrice) {
+            submissionData.append("discountedPrice", Number(formData.discountedPrice));
+          }
+          
+          // Add other changed fields
+          for (const key in formData) {
+            // Skip fields we've already handled
+            if (key === 'id' || key === 'price' || key === 'stockQuantity' || key === 'discountedPrice') {
+              continue;
+            }
+            
+            // Only include fields that have values
+            if (formData[key] !== undefined && formData[key] !== "") {
+              submissionData.append(key, formData[key]);
+            }
+          }
+          
+          // Add new image files
+          imageFiles.forEach((file) => {
+            submissionData.append("images", file);
+          });
+          
+          // Add existing image URLs
+          submissionData.append("imagesUrls", JSON.stringify(remainingExistingUrls));
+          
+          console.log("Updating product with new images...");
+          const updateUrl = API_ROUTES.products.update(formData.id);
+          console.log("Update URL:", updateUrl);
+          
+          response = await apiClient.put(
+            updateUrl,
+            submissionData,
+            { headers: { "Content-Type": "multipart/form-data" } }
+          );
+          console.log("Update response:", response);
+        } else {
+          // If no new images, use direct JSON approach which preserves types better
+          // Only include the changed fields
+          const updateData = {
+            id: formData.id
+          };
+          
+          // Handle numeric fields specially
+          if (formData.price) updateData.price = Number(formData.price);
+          if (formData.stockQuantity) updateData.stockQuantity = Number(formData.stockQuantity);
+          
+          // Handle discountedPrice specially
+          if (formData.discountedPrice === "" || formData.discountedPrice === null) {
+            updateData.discountedPrice = null;
+          } else if (formData.discountedPrice) {
+            updateData.discountedPrice = Number(formData.discountedPrice);
+          }
+          
+          // Add other changed fields
+          for (const key in formData) {
+            // Skip fields we've already handled
+            if (key === 'id' || key === 'price' || key === 'stockQuantity' || key === 'discountedPrice') {
+              continue;
+            }
+            
+            // Only include fields that have values
+            if (formData[key] !== undefined && formData[key] !== "") {
+              updateData[key] = formData[key];
+            }
+          }
+          
+          // Include remaining images
+          updateData.imagesUrls = remainingExistingUrls;
+          
+          console.log("Updating product with JSON data:", updateData);
+          const updateUrl = API_ROUTES.products.update(formData.id);
+          console.log("Update URL:", updateUrl);
+          
+          response = await apiClient.put(
+            updateUrl,
+            updateData
+          );
+          console.log("Update response:", response);
+        }
       }
       
       console.log("API Response:", response);
@@ -312,7 +365,14 @@ const ProductFormModal = ({
       window.location.reload();
     } catch (error) {
       console.error("Error submitting product:", error);
-      alert("An error occurred while saving the product.");
+      
+      // Show more detailed error information if available
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+        alert(`Error: ${error.response.data.error || error.response.data.message || "An error occurred while saving the product."}`);
+      } else {
+        alert("An error occurred while saving the product. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
