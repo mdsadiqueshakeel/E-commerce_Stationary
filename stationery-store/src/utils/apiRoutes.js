@@ -13,7 +13,7 @@ const API_ROUTES = {
     googleLogin: `${BASE_URL}/api/auth/google`,
   },
   products: {
-    getAll: `${BASE_URL}/api/products`,
+    getAllbyAdmin: `${BASE_URL}/api/admin/products`,
     getById: (id) => `${BASE_URL}/api/products/${id}`,
     create: `${BASE_URL}/api/admin/products/create`,
     update: (id) => `${BASE_URL}/api/admin/products/${id}`,
@@ -28,6 +28,8 @@ const API_ROUTES = {
   users: {
     updateProfile: `${BASE_URL}/api/auth/profile`,
     getProfile: `${BASE_URL}/api/auth/me`,
+    getProductById: (id) => `${BASE_URL}/api/products/${id}`,
+    getAllProducts: `${BASE_URL}/api/products`,
   },
 };
 

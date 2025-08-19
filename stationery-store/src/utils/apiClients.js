@@ -28,6 +28,10 @@ const apiClient = {
     const res = await axiosInstance.put(url, data, config);
     return res.data;
   },
+  patch: async (url, data, config = {}) => {
+    const res = await axiosInstance.patch(url, data, config);
+    return res.data;
+  },
   delete: async (url, config = {}) => {
     const res = await axiosInstance.delete(url, config);
     return res.data;

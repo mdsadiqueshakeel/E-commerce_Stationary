@@ -116,7 +116,7 @@ async function createProduct(req, res) {
             shortDesc,
             price: Number(price),
             discountedPrice: discountedPrice ? Number(discountedPrice) : null,
-            productCode,
+            productCode: productCode || null,
             stockQuantity: stockQuantity ? Number(stockQuantity) : 0,
             categoryId,
             brand,

@@ -2,7 +2,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import CartButton from "../CartButton";
 import productsData from "../../utils/products.json";
-
+import { API_ROUTES } from "@/utils/apiRoutes";
+import apiClient from "@/utils/apiClients";
 
 const MainContentSection = () => {
   // CSS for hiding scrollbar
@@ -86,6 +87,7 @@ const MainContentSection = () => {
       }, 300);
     }
   };
+  
 
   const handleViewAll = () => {};
 
