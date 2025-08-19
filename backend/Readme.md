@@ -56,6 +56,16 @@ backend/
 - `PUT /api/auth/addresses/:id` - update a address
 - `DELETE /api/auth/addresses/:id` - delete a address
 
+### Orders (User)
+- `POST /api/auth/orders` - Create orders
+
+### Orders (Admin)
+- `GET /api/admin/orders` - Show orders
+- `GET /api/admin/orders/:id` - Show order by Id
+- `PATCH /api/admin/orders/:id/status` - Update orders
+- `DELETE /api/admin/orders/:id` - Delete orders
+
+
 ## Database Schema
 
 ```prisma
@@ -87,6 +97,16 @@ model Address {
   postalCode String
   country    String
   isDefault  Boolean  @default(false)
+}
+
+model Order {
+  items           OrderItem[]
+  status          OrderStatus     @default(PENDING)
+  fulfillment     FulfillmentType @default(SHIPPING)
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus   @default(PENDING)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 ```
 

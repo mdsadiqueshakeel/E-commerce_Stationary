@@ -7,6 +7,8 @@ const authRoutes = require("./route/authRoutes");
 const userRoutes = require("./route/productRoutes/userRouters.js");
 const adminRoutes = require("./route/productRoutes/adminRoutes.js");
 const addressRoutes = require("./route/addressRoutes.js");
+const userOrderRoutes = require("./route/orderRoutes/userOrderRoutes.js");
+const adminOrderRoutes = require("./route/orderRoutes/adminOrderRoutes.js");
 const cors = require('cors');
 const app = express();
 require('./utils/cleanupToken.js'); // Import the cron job for cleaning expired tokens
@@ -25,6 +27,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', userRoutes);
 app.use('/api/admin/products', adminRoutes);
 app.use('/api/auth/addresses', addressRoutes);
+app.use('api/auth/orders', userOrderRoutes);
+app.use('api/admin/orders', adminOrderRoutes);
 // app.use("/",require('./route/testRoute'));
 
 const PORT = process.env.PORT || 5000;
