@@ -166,9 +166,9 @@ async function updateProduct(req, res) {
     
     // Ensure req.body exists before trying to iterate over it
     if (req.body) {
-        // Copy all fields except imagesUrls (which we'll handle separately)
+        // Copy all fields except imagesUrls and existingImages (which we'll handle separately)
         for (const key in req.body) {
-            if (key !== 'imagesUrls') {
+            if (key !== 'imagesUrls' && key !== 'existingImages') {
                 cleanData[key] = req.body[key];
             }
         }
@@ -223,86 +223,105 @@ async function updateProduct(req, res) {
             console.log("No files uploaded in this request");
         }
 
-        // Handle existing image URLs from request body
-        let imagesUrls = undefined;
-        if (req.body) {
-            imagesUrls = req.body.imagesUrls;
-        }
-        console.log("Received imagesUrls:", imagesUrls);
+        // Handle existing image URLs from request body - support both JSON and FormData formats
+        let existingImages = [];
         
-        if (imagesUrls) {
-            let parsedUrls = [];
-            
-            // Handle different formats of imagesUrls
-            if (typeof imagesUrls === 'string') {
-                try {
-                    // Try to parse as JSON
-                    parsedUrls = JSON.parse(imagesUrls);
-                    console.log("Successfully parsed imagesUrls as JSON:", parsedUrls);
-                } catch (e) {
-                    // If parsing fails, treat as a single URL
-                    console.log("Failed to parse imagesUrls as JSON, treating as single URL:", e.message);
-                    if (imagesUrls.trim()) {
-                        parsedUrls = [imagesUrls];
-                    }
+        // Check for JSON format with existingImages field
+        if (req.body && req.body.existingImages) {
+            try {
+                // Handle both array and string formats
+                if (Array.isArray(req.body.existingImages)) {
+                    existingImages = req.body.existingImages;
+                } else {
+                    existingImages = JSON.parse(req.body.existingImages);
                 }
-            } else if (Array.isArray(imagesUrls)) {
-                // Already an array
-                parsedUrls = imagesUrls;
-                console.log("imagesUrls is already an array");
+                console.log("Received existingImages (JSON format):", existingImages);
+            } catch (e) {
+                console.error("Error parsing existingImages:", e);
+                // If it's a string but not JSON, treat as a single URL
+                if (typeof req.body.existingImages === 'string' && req.body.existingImages.trim()) {
+                    existingImages = [req.body.existingImages];
+                }
             }
+        }
+        // Check for FormData format with imagesUrls
+        else if (req.body && req.body.imagesUrls) {
+            try {
+                // Handle both array and string formats
+                if (Array.isArray(req.body.imagesUrls)) {
+                    existingImages = req.body.imagesUrls;
+                } else {
+                    existingImages = JSON.parse(req.body.imagesUrls);
+                }
+                console.log("Received imagesUrls (FormData format):", existingImages);
+            } catch (e) {
+                console.error("Error parsing imagesUrls:", e);
+                // If it's a string but not JSON, treat as a single URL
+                if (typeof req.body.imagesUrls === 'string' && req.body.imagesUrls.trim()) {
+                    existingImages = [req.body.imagesUrls];
+                }
+            }
+        }
+        
+        // Process the existing images to extract URLs properly
+        if (Array.isArray(existingImages)) {
+            const urls = existingImages.map(img => {
+                if (typeof img === 'object' && img.image) return img.image;
+                if (typeof img === 'string') return img.trim().replace(/`/g, '');
+                return img;
+            }).filter(Boolean); // Filter out any empty/null values
             
-            if (Array.isArray(parsedUrls)) {
-                // Extract URLs properly based on format and clean them
-                const urls = parsedUrls.map(img => {
-                    if (typeof img === 'object' && img.image) return img.image;
-                    if (typeof img === 'string') return img.trim().replace(/`/g, '');
-                    return img;
-                }).filter(Boolean); // Filter out any empty/null values
-                
-                console.log("Processed existing image URLs:", urls);
-                images = images.concat(urls);
-            }
+            console.log("Processed existing image URLs:", urls);
+            images = images.concat(urls);
         }
 
         console.log("Final combined images array:", images);
 
-        // If we have any images (new uploads or existing URLs)
-        if (images.length > 0) {
-            // Find old images in DB
-            const oldImages = await prisma.productImage.findMany({
-                where: { productId: id },
-            });
-
-            // Delete old images from S3
-            for (const img of oldImages) {
-                try {
-                    const url = new URL(img.url);
-                    // extract key after bucket host
-                    const key = url.pathname.substring(1); // Remove leading slash
-                    await s3.send(new DeleteObjectCommand({
-                        Bucket: process.env.S3_BUCKET_NAME,
-                        Key: key,
-                    }));
-                    console.log(`Deleted old image from S3: ${key}`)
-                } catch (error) {
-                    console.error(`Error deleting old image from S3: ${error.message}`);
-                    console.error(`Could not delete image: ${img.url}`);
+        // Check if we're updating images or just other fields
+        // Use the explicit flag from the frontend if available, otherwise fall back to checking files/URLs
+        const isImageUpdate = req.body.isUpdatingImages === 'true' || 
+                             (req.files?.length > 0 || req.body.existingImages !== undefined || req.body.imagesUrls !== undefined);
+        
+        // If we're updating images
+        if (isImageUpdate) {
+            if (images.length > 0) {
+                // Find old images in DB
+                const oldImages = await prisma.productImage.findMany({
+                    where: { productId: id },
+                });
+    
+                // Delete old images from S3
+                for (const img of oldImages) {
+                    try {
+                        const url = new URL(img.url);
+                        // extract key after bucket host
+                        const key = url.pathname.substring(1); // Remove leading slash
+                        await s3.send(new DeleteObjectCommand({
+                            Bucket: process.env.S3_BUCKET_NAME,
+                            Key: key,
+                        }));
+                        console.log(`Deleted old image from S3: ${key}`)
+                    } catch (error) {
+                        console.error(`Error deleting old image from S3: ${error.message}`);
+                        console.error(`Could not delete image: ${img.url}`);
+                    }
                 }
+    
+                // Remove old images from DB
+                await prisma.productImage.deleteMany({
+                    where: { productId: id },
+                });
+    
+                // Add new images to DB
+                cleanData.images = {
+                    create: images.map(url => ({ url }))   // loop to create multiple image records
+                };
+            } else {
+                console.log("No images found in the request");
+                return res.status(400).json({ error: "At least one product image is required" });
             }
-
-            // Remove old images from DB
-            await prisma.productImage.deleteMany({
-                where: { productId: id },
-            });
-
-            // Add new images to DB
-            cleanData.images = {
-                create: images.map(url => ({ url }))   // loop to create multiple image records
-            };
         } else {
-            console.log("No images found in the request");
-            return res.status(400).json({ error: "At least one product image is required" });
+            console.log("Not updating images, skipping image processing");
         }
 
         // Validate description length
