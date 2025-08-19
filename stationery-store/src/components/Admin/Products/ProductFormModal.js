@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X, Paperclip, Trash2 } from "lucide-react";
 import { API_ROUTES } from "@/utils/apiRoutes";
 import apiClient from "@/utils/apiClients";
@@ -37,6 +37,8 @@ const ProductFormModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [modifiedFields, setModifiedFields] = useState({}); // Track which fields have been modified
+  const originalData = useRef({}); // Store the original data for comparison
 
   // Reset form on close
   useEffect(() => {
@@ -46,6 +48,8 @@ const ProductFormModal = ({
       setImagePreviews([]);
       setExistingImages([]);
       setFormErrors({});
+      setModifiedFields({});
+      originalData.current = {};
     }
   }, [isOpen]);
 
@@ -60,14 +64,22 @@ const ProductFormModal = ({
           API_ROUTES.products.getById(productId)
         );
         
-        // Set form data
-        setFormData({
+        const formattedData = {
           ...initialFormData,
           ...itemWithImages,
           id: itemWithImages.id,
           discountedPrice: itemWithImages.discountedPrice ?? "",
           isActive: itemWithImages.isActive ?? true,
-        });
+        };
+        
+        // Set form data
+        setFormData(formattedData);
+        
+        // Store original data for comparison
+        originalData.current = { ...formattedData };
+        
+        // Reset modified fields
+        setModifiedFields({});
 
         // Handle images
         if (itemWithImages.images?.length > 0) {
@@ -89,10 +101,35 @@ const ProductFormModal = ({
 
   const handleInputChange = (e) => {
     const { id, value, type, checked } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+    
     setFormData(prev => ({
       ...prev,
-      [id]: type === "checkbox" ? checked : value
+      [id]: newValue
     }));
+    
+    // Track modified fields (only in edit mode)
+    if (mode === "edit") {
+      // Compare with original value
+      const originalValue = originalData.current[id];
+      const valueChanged = type === "checkbox" 
+        ? originalValue !== checked
+        : String(originalValue) !== String(value);
+      
+      if (valueChanged) {
+        setModifiedFields(prev => ({
+          ...prev,
+          [id]: newValue
+        }));
+      } else {
+        // If value is back to original, remove from modified fields
+        setModifiedFields(prev => {
+          const updated = { ...prev };
+          delete updated[id];
+          return updated;
+        });
+      }
+    }
   };
 
   const handleImageChange = (e) => {
@@ -134,37 +171,62 @@ const ProductFormModal = ({
   const prepareFormData = (isCreate) => {
     const form = new FormData();
     
-    // Add basic fields
-    const fields = { ...formData };
+    // For create mode, use all fields
+    // For update mode, use only modified fields
+    const fieldsToUse = isCreate 
+      ? { ...formData } 
+      : { id: formData.id, ...modifiedFields };
     
-    // Convert numeric fields
-    fields.price = Number(fields.price);
-    fields.stockQuantity = Number(fields.stockQuantity);
+    // Always include ID for updates
+    if (!isCreate && !fieldsToUse.id) {
+      fieldsToUse.id = formData.id;
+    }
+    
+    // Convert numeric fields if they exist in fieldsToUse
+    if (fieldsToUse.price) fieldsToUse.price = Number(fieldsToUse.price);
+    if (fieldsToUse.stockQuantity) fieldsToUse.stockQuantity = Number(fieldsToUse.stockQuantity);
     
     // Handle discountedPrice
-    if (fields.discountedPrice === "" || fields.discountedPrice === null) {
-      if (!isCreate) form.append("discountedPrice", "null");
-    } else {
-      fields.discountedPrice = Number(fields.discountedPrice);
+    if (fieldsToUse.discountedPrice !== undefined) {
+      if (fieldsToUse.discountedPrice === "" || fieldsToUse.discountedPrice === null) {
+        if (!isCreate) form.append("discountedPrice", "null");
+      } else {
+        fieldsToUse.discountedPrice = Number(fieldsToUse.discountedPrice);
+      }
     }
     
     // Add fields to FormData
-    Object.entries(fields).forEach(([key, value]) => {
+    Object.entries(fieldsToUse).forEach(([key, value]) => {
       if (value !== undefined && value !== "" && 
           !(isCreate && key === 'discountedPrice' && value === null)) {
         form.append(key, value);
       }
     });
     
-    // Add images
+    // Add new image files (if any)
     imageFiles.forEach(file => form.append("images", file));
     
-    // For update: add existing image URLs
-    if (!isCreate && existingImages.length > 0) {
+    // For update: ALWAYS include existing image URLs
+    // This is critical because the backend requires at least one image
+    if (!isCreate) {
+      // Always include existing images for updates, even if they weren't modified
+      // This ensures the backend always has image data
       const cleanUrls = existingImages.map(url => 
         url.trim().replace(/`/g, '').replace(/^\s+|\s+$/g, '')
       );
+      
+      // Always append imagesUrls, even if empty array
+      // This tells the backend explicitly what images to keep
       form.append("imagesUrls", JSON.stringify(cleanUrls));
+      
+      // Add a flag to indicate if we're updating images or not
+      const isUpdatingImages = imageFiles.length > 0 || 
+        JSON.stringify(existingImages) !== JSON.stringify(originalData.current.images?.map(img => img.url) || []);
+      form.append("isUpdatingImages", isUpdatingImages.toString());
+      
+      // Log for debugging
+      console.log("Existing images included in update:", cleanUrls);
+      console.log("Is updating images:", isUpdatingImages);
     }
     
     return form;
@@ -186,10 +248,25 @@ const ProductFormModal = ({
       return;
     }
     
+    // For edit mode, check if any changes were made
+    if (mode === "edit" && 
+        Object.keys(modifiedFields).length === 0 && 
+        imageFiles.length === 0 && 
+        JSON.stringify(existingImages) === JSON.stringify(originalData.current.images?.map(img => img.url) || [])) {
+      alert("No changes detected. Please modify at least one field before saving.");
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
       const formDataToSend = prepareFormData(mode === "add");
+      
+      // Log what's being sent (for debugging)
+      console.log("Sending data:", mode === "add" ? "All fields" : "Only modified fields");
+      if (mode === "edit") {
+        console.log("Modified fields:", Object.keys(modifiedFields));
+      }
       
       let response;
       if (mode === "add") {
@@ -199,21 +276,42 @@ const ProductFormModal = ({
           { headers: { "Content-Type": "multipart/form-data" } }
         );
       } else {
-        // Use axios directly for update with FormData
-        const axiosInstance = axios.create({
-          baseURL: process.env.NEXT_PUBLIC_API_URL,
-        });
-        
-        // Add auth token
-        const token = localStorage.getItem("auth_token");
-        if (token) {
-          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        // For edit mode, let's use JSON instead of FormData for non-image updates
+        if (imageFiles.length === 0) {
+          // Use JSON for simple field updates
+          const jsonData = { id: formData.id, ...modifiedFields };
+          
+          // Always include existing images
+          jsonData.existingImages = existingImages.map(url => 
+            url.trim().replace(/`/g, '').replace(/^\s+|\s+$/g, '')
+          );
+          
+          response = await apiClient.put(
+            API_ROUTES.products.update(formData.id),
+            jsonData
+          );
+        } else {
+          // Use FormData for updates with new images
+          const axiosInstance = axios.create({
+            baseURL: process.env.NEXT_PUBLIC_API_URL,
+          });
+          
+          // Add auth token
+          const token = localStorage.getItem("auth_token");
+          if (token) {
+            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          }
+          
+          response = await axiosInstance.put(
+            API_ROUTES.products.update(formData.id),
+            formDataToSend,
+            { 
+              headers: { 
+                'Content-Type': 'multipart/form-data' 
+              } 
+            }
+          );
         }
-        
-        response = await axiosInstance.put(
-          API_ROUTES.products.update(formData.id),
-          formDataToSend
-        );
         
         response = response.data; // Extract data to match apiClient format
       }

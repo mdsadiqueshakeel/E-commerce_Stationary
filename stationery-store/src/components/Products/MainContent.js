@@ -139,7 +139,7 @@ const MainContentSection = () => {
         return product.images[0].url;
       }
     }
-    return '/images/placeholder-product.jpg'; // Fallback image
+    return 'https://via.placeholder.com/150'; // Fallback image
   };
 
   return (
@@ -243,7 +243,7 @@ const MainContentSection = () => {
                             src={getProductImage(product)}
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = '/images/placeholder-product.jpg';
+                              e.target.src = 'https://via.placeholder.com/150';
                               console.log('Image failed to load, using placeholder for:', product.title);
                             }}
                             loading="lazy"

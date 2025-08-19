@@ -50,8 +50,11 @@ const ProductTable = ({ onEdit, refreshTrigger }) => {
     }
   };
 
+  const [updatingStatus, setUpdatingStatus] = useState(null);
+  
   const handleStatusUpdate = async (id, newStatus) => {
     try {
+      setUpdatingStatus(id);
       await apiClient.patch(API_ROUTES.products.status(id), { status: newStatus });
       setProducts((prev) =>
         prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
@@ -59,6 +62,8 @@ const ProductTable = ({ onEdit, refreshTrigger }) => {
     } catch (error) {
       console.error("Error updating status:", error);
       alert("Failed to update status.");
+    } finally {
+      setUpdatingStatus(null);
     }
   };
 
@@ -170,22 +175,26 @@ const ProductTable = ({ onEdit, refreshTrigger }) => {
                       <div className="flex items-center space-x-3">
                         <button onClick={() => onEdit(product)}><Edit size={16} /></button>
                         <button onClick={() => handleDelete(product.id)} className="text-red-500"><Trash2 size={16} /></button>
-                        {/* Status Change Dropdown */}
-                        <div className="relative group">
-                          <button><ChevronDown size={16} /></button>
-                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                            {["NORMAL", "DRAFT", "FEATURE"].map((status) =>
-                              product.status !== status && (
-                                <button
-                                  key={status}
-                                  onClick={() => handleStatusUpdate(product.id, status)}
-                                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  Set as {status}
-                                </button>
-                              )
-                            )}
-                          </div>
+                        {/* Status Change Select Dropdown */}
+                        <div className="relative">
+                          {updatingStatus === product.id ? (
+                            <div className="flex items-center">
+                              <div className="w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin mr-2"></div>
+                              <span className="text-xs">Updating...</span>
+                            </div>
+                          ) : (
+                            <select
+                              value={product.status}
+                              onChange={(e) => handleStatusUpdate(product.id, e.target.value)}
+                              className="block w-full py-1 px-2 text-sm border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+                              {["NORMAL", "DRAFT", "FEATURE"].map((status) => (
+                                <option key={status} value={status}>
+                                  {status}
+                                </option>
+                              ))}
+                            </select>
+                          )}
                         </div>
                       </div>
                     </td>
