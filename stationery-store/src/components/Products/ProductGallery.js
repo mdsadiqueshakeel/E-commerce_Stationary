@@ -228,7 +228,7 @@ const ProductGallerySection = () => {
       return product.images[0];
     }
     // change this image to text placeholder image
-    return 'https://via.placeholder.jp/150'; // Fallback image
+    return 'https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image'; // Fallback image
   };
 
   const categorySliderRef = useRef(null);
@@ -267,7 +267,7 @@ const ProductGallerySection = () => {
             className="w-full h-44 sm:h-56 md:h-64 object-cover transition-transform duration-500 hover:scale-110" 
             alt={product.title || product.name || 'Product image'} 
             src={getProductImage(product)} 
-            onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
+            onError={(e) => { e.target.src = 'https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image'; }}
           />
         </div>
 

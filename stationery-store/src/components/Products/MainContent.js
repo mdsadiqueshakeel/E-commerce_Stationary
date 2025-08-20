@@ -139,7 +139,7 @@ const MainContentSection = () => {
         return product.images[0].url;
       }
     }
-    return 'https://via.placeholder.com/150'; // Fallback image
+    return 'https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image'; // Fallback image
   };
 
   return (
@@ -243,7 +243,7 @@ const MainContentSection = () => {
                             src={getProductImage(product)}
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = 'https://via.placeholder.com/150';
+                              e.target.src = 'https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image';
                               console.log('Image failed to load, using placeholder for:', product.title);
                             }}
                             loading="lazy"

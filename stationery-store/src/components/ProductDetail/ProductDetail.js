@@ -1,14 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import CartButton from "../CartButton";
-import productData from "../../utils/products.json";
-import featureData from "@/utils/feature.json";
+import { API_ROUTES } from "@/utils/apiRoutes";
+import apiClient from "@/utils/apiClients";
 
 // Replacing imported images with placeholder URLs and SVG components
-
-// Sample product data - in a real app, this would come from an API or database
-
-
 
 const ProductDetailsSection = ({ productId }) => {
   const [selectedVariant, setSelectedVariant] = useState("Option one");
@@ -16,39 +12,88 @@ const ProductDetailsSection = ({ productId }) => {
   const [activeTab, setActiveTab] = useState("Details");
   const [product, setProduct] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("ProductDetail.js - Received productId:", productId);
-    // Find the product with the matching ID
-    if (productId) {
-      const foundProduct = productData.find(p => p.id === productId) || featureData.find(p => p.id === productId);
-      if (foundProduct) {
-        setProduct(foundProduct);
-        console.log("ProductDetail.js - Found product:", foundProduct);
-      } else {
-        console.log("ProductDetail.js - Product not found for ID:", productId);
+    const fetchProductData = async () => {
+      if (!productId) return;
+      
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const response = await apiClient.get(API_ROUTES.users.getProductById(productId));
+        if (response && response.itemWithImages) {
+          setProduct(response.itemWithImages);
+          console.log("ProductDetail.js - Fetched product:", response.itemWithImages);
+        } else {
+          setError("Product data structure is not as expected");
+          console.error("ProductDetail.js - Unexpected product data structure:", response);
+        }
+      } catch (err) {
+        setError("Failed to fetch product details");
+        console.error("ProductDetail.js - Error fetching product:", err);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
+
+    fetchProductData();
   }, [productId]);
+
+  // Reference for the image slider
+  const sliderRef = useRef(null);
+
+  // If product is not found or loading, show loading state
+  if (isLoading) {
+    return (
+      <section className="flex flex-col items-center gap-4 py-8 px-4 sm:px-6 lg:px-8 relative self-stretch w-full bg-gradient-to-b from-[#FFDCDC] to-[#FFF0E6]">
+        <div className="flex flex-col items-center justify-center w-full py-20">
+          <div className="w-12 h-12 border-4 border-t-transparent border-[#2f153c] rounded-full animate-spin"></div>
+          <p className="mt-4 text-[#2f153c]">Loading product details...</p>
+        </div>
+      </section>
+    );
+  }
+
+  // If there's an error, show error state
+  if (error) {
+    return (
+      <section className="flex flex-col items-center gap-4 py-8 px-4 sm:px-6 lg:px-8 relative self-stretch w-full bg-gradient-to-b from-[#FFDCDC] to-[#FFF0E6]">
+        <div className="flex flex-col items-center justify-center w-full py-20">
+          <p className="text-red-500">{error}</p>
+          <button 
+            onClick={() => window.location.href = '/products'}
+            className="mt-4 px-4 py-2 bg-[#2f153c] text-white rounded-lg"
+          >
+            Back to Products
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   // If product is not found, use default values
   const breadcrumbItems = [
     { id: 1, label: "Shop all", isActive: false },
-    { id: 2, label: product ? product.category : "Category", isActive: false },
-    { id: 3, label: product ? product.name : "Product name", isActive: true },
+    { id: 2, label: product?.categoryId || "Category", isActive: false },
+    { id: 3, label: product?.title || "Product name", isActive: true },
   ];
 
-  // Use placeholder images if product image is not available
-  const productImages = [
-    { src: product?.image || "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+1", alt: `${product?.name || 'Product'} image 1` },
-    { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+2", alt: `${product?.name || 'Product'} image 2` },
-    { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+3", alt: `${product?.name || 'Product'} image 3` },
-    { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+4", alt: `${product?.name || 'Product'} image 4` },
-    { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+5", alt: `${product?.name || 'Product'} image 5` },
-  ];
-  
-  // Reference for the image slider
-  const sliderRef = useRef(null);
+  // Use product images from API or placeholders if not available
+  const productImages = product?.images?.length 
+    ? product.images.map((img, index) => ({
+        src: img.url,
+        alt: img.altText || `${product.title} image ${index + 1}`
+      }))
+    : [
+        { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+1", alt: "Product image 1" },
+        { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+2", alt: "Product image 2" },
+        { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+3", alt: "Product image 3" },
+        { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+4", alt: "Product image 4" },
+        { src: "https://placehold.co/600x400/2f153c/FFFFFF?text=Product+Image+5", alt: "Product image 5" },
+      ];
   
   // Function to scroll the slider
   const scrollSlider = (direction) => {
@@ -60,18 +105,13 @@ const ProductDetailsSection = ({ productId }) => {
 
   // Star ratings component will be rendered directly with SVG
 
+  // Create variant options based on product data
   const variantOptions = [
-    { label: product?.variant || "Option one", available: true },
-    { label: "Option Two", available: true },
-    { label: "Option Three", available: false },
+    { label: product?.productCode || "Default", available: product?.stockQuantity > 0 },
   ];
 
-  // Use product features if available, otherwise use default
-  const productFeatures = product?.features || [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  ];
+  // Parse tags if available
+  const productTags = product?.tags ? product.tags.split(',').map(tag => tag.trim()) : [];
 
   const tabOptions = ["Details", "Shipping", "Returns"];
 
@@ -191,24 +231,35 @@ const ProductDetailsSection = ({ productId }) => {
               {/* Product name and price */}
               <div className="flex flex-col items-start gap-3 w-full">
                 <h1 className="text-2xl md:text-3xl font-bold text-[#2f153c] leading-tight">
-                  {product ? product.name : "Product name"}
+                  {product?.title || "Product name"}
                 </h1>
                 
                 <div className="flex flex-wrap items-center justify-between w-full gap-2">
                   <div className="text-xl md:text-2xl font-bold text-[#2f153c]">
-                    {product ? product.price : "$55"}
+                    {product ? (
+                      <>
+                        {product.discountedPrice ? (
+                          <>
+                            <span>${product.discountedPrice.toFixed(2)}</span>
+                            <span className="ml-2 text-lg line-through text-gray-500">${product.price.toFixed(2)}</span>
+                          </>
+                        ) : (
+                          <span>${product.price.toFixed(2)}</span>
+                        )}
+                      </>
+                    ) : "$0.00"}
                   </div>
                   
                   <div className="flex items-center gap-1">
                     <div
                       className="inline-flex items-center"
                       role="img"
-                      aria-label="4.5 out of 5 stars"
+                      aria-label="Product rating"
                     >
                       {[1, 2, 3, 4, 5].map((star, index) => (
                         <svg
                           key={index}
-                          className="w-4 h-4 text-[#FFD6BA] fill-current"
+                          className={`w-4 h-4 ${index < (product?.rating || 0) ? "text-yellow-400" : "text-[#FFD6BA]"} fill-current`}
                           viewBox="0 0 24 24"
                           xmlns="http://www.w3.org/2000/svg"
                         >
@@ -217,7 +268,7 @@ const ProductDetailsSection = ({ productId }) => {
                       ))}
                     </div>
                     <p className="text-sm text-[#2f153c]/80 whitespace-nowrap">
-                      (3.5 stars) • 10 reviews
+                      {product?.rating || 0} ({product?.reviewCount || 0} reviews)
                     </p>
                   </div>
                 </div>
@@ -226,24 +277,21 @@ const ProductDetailsSection = ({ productId }) => {
               {/* Product description and features */}
               <div className="flex flex-col items-start gap-3 w-full">
                 <p className="text-sm md:text-base text-[#2f153c]/80 leading-relaxed">
-                  {product ? product.description : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."}
+                  {product?.description || "No description available"}
                 </p>
 
-                <ul className="flex flex-col items-start gap-1 w-full">
-                  {productFeatures.map((feature, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center gap-2 w-full"
-                    >
+                {product?.shortDesc && (
+                  <ul className="flex flex-col items-start gap-1 w-full">
+                    <li className="flex items-center gap-2 w-full">
                       <svg className="w-4 h-4 text-[#2f153c] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       <p className="flex-1 text-sm md:text-base text-[#2f153c]/80 leading-relaxed">
-                        {feature}
+                        {product.shortDesc}
                       </p>
                     </li>
-                  ))}
-                </ul>
+                  </ul>
+                )}
               </div>
 
               {/* Tabs section */}
@@ -278,11 +326,37 @@ const ProductDetailsSection = ({ productId }) => {
                   aria-labelledby={`${activeTab.toLowerCase()}-tab`}
                   className="w-full"
                 >
-                  <p className="text-sm md:text-base text-[#2f153c]/80 leading-relaxed">
-                    {activeTab === "Details" ? "Product details and specifications." : 
-                     activeTab === "Shipping" ? "Free shipping on orders over $50. Standard delivery in 3-5 business days." : 
-                     "Returns accepted within 30 days of delivery. Item must be unused and in original packaging."}
-                  </p>
+                  {activeTab === "Details" ? (
+                    <div className="text-sm md:text-base text-[#2f153c]/80 leading-relaxed">
+                      <p>{product?.description || "No details available"}</p>
+                      {product?.dimensions && (
+                        <p className="mt-2"><strong>Dimensions:</strong> {product.dimensions}</p>
+                      )}
+                      {product?.weight && (
+                        <p><strong>Weight:</strong> {product.weight}g</p>
+                      )}
+                      {productTags.length > 0 && (
+                        <div className="mt-2">
+                          <strong>Tags:</strong>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {productTags.map((tag, index) => (
+                              <span key={index} className="px-2 py-1 bg-[#FFD6BA]/30 text-[#2f153c] text-xs rounded-full">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : activeTab === "Shipping" ? (
+                    <p className="text-sm md:text-base text-[#2f153c]/80 leading-relaxed">
+                      Free shipping on orders over $50. Standard delivery in 3-5 business days.
+                    </p>
+                  ) : (
+                    <p className="text-sm md:text-base text-[#2f153c]/80 leading-relaxed">
+                      Returns accepted within 30 days of delivery. Item must be unused and in original packaging.
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -332,7 +406,7 @@ const ProductDetailsSection = ({ productId }) => {
                 <div className="flex items-center">
                   <button 
                     onClick={() => handleQuantityChange(quantity - 1)}
-                    disabled={quantity <= 1}
+                    disabled={quantity <= 1 || !product?.stockQuantity}
                     className="px-2 py-1 border border-solid border-[#2f153c] border-r-0 rounded-l-lg text-[#2f153c] disabled:opacity-50"
                   >
                     -
@@ -341,19 +415,27 @@ const ProductDetailsSection = ({ productId }) => {
                     id="quantity-input"
                     type="number"
                     min="1"
+                    max={product?.stockQuantity || 1}
                     value={quantity}
                     onChange={(e) =>
                       handleQuantityChange(Number.parseInt(e.target.value) || 1)
                     }
                     className="flex w-[3.125rem] items-center text-center p-1 border-y border-solid border-[#2f153c] text-sm md:text-base text-[#2f153c] focus:outline-none"
+                    disabled={!product?.stockQuantity}
                   />
                   <button 
                     onClick={() => handleQuantityChange(quantity + 1)}
-                    className="px-2 py-1 border border-solid border-[#2f153c] border-l-0 rounded-r-lg text-[#2f153c]"
+                    disabled={!product?.stockQuantity || (product && quantity >= product.stockQuantity)}
+                    className="px-2 py-1 border border-solid border-[#2f153c] border-l-0 rounded-r-lg text-[#2f153c] disabled:opacity-50"
                   >
                     +
                   </button>
                 </div>
+                <span className="text-xs text-[#2f153c]/70">
+                  {product?.stockQuantity > 0 
+                    ? `${product.stockQuantity} in stock` 
+                    : "Out of stock"}
+                </span>
               </div>
 
               {/* Action buttons */}
@@ -363,17 +445,18 @@ const ProductDetailsSection = ({ productId }) => {
                     onClick={() => {
                       // Import dynamically to avoid SSR issues
                       import('../../utils/cartUtils').then(({ addToCart }) => {
-                        if (product) {
+                        if (product && product.stockQuantity > 0) {
                           addToCart(product, quantity, selectedVariant);
                           window.dispatchEvent(new Event('cartUpdated'));
                           // Show a toast or notification
                         }
                       });
                     }}
-                    className="flex items-center justify-center px-4 py-2 w-full bg-[#2f153c] border border-solid border-[#2f153c] rounded-lg shadow-sm text-white cursor-pointer hover:bg-[#2f153c]/90 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c]"
+                    disabled={!product?.stockQuantity}
+                    className={`flex items-center justify-center px-4 py-2 w-full border border-solid border-[#2f153c] rounded-lg shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c] ${product?.stockQuantity > 0 ? 'bg-[#2f153c] text-white cursor-pointer hover:bg-[#2f153c]/90' : 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-300'}`}
                   >
-                    <span className="text-sm md:text-base font-medium text-white whitespace-nowrap">
-                      Add To Cart
+                    <span className="text-sm md:text-base font-medium whitespace-nowrap">
+                      {product?.stockQuantity > 0 ? 'Add To Cart' : 'Out of Stock'}
                     </span>
                   </button>
 
@@ -381,17 +464,18 @@ const ProductDetailsSection = ({ productId }) => {
                     onClick={() => {
                       // Import dynamically to avoid SSR issues
                       import('../../utils/cartUtils').then(({ addToCart }) => {
-                        if (product) {
+                        if (product && product.stockQuantity > 0) {
                           addToCart(product, quantity, selectedVariant);
                           // Navigate to cart page
                           window.location.href = '/cart';
                         }
                       });
                     }}
-                    className="flex items-center justify-center px-4 py-2 w-full border border-solid border-[#2f153c] rounded-lg shadow-sm cursor-pointer hover:bg-[#FFD6BA] hover:text-[#2f153c] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c]"
+                    disabled={!product?.stockQuantity}
+                    className={`flex items-center justify-center px-4 py-2 w-full border border-solid rounded-lg shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2f153c] ${product?.stockQuantity > 0 ? 'border-[#2f153c] text-[#2f153c] cursor-pointer hover:bg-[#FFD6BA] hover:text-[#2f153c]' : 'border-gray-300 text-gray-500 cursor-not-allowed'}`}
                   >
-                    <span className="text-sm md:text-base font-medium text-[#2f153c] whitespace-nowrap">
-                      Buy Now
+                    <span className="text-sm md:text-base font-medium whitespace-nowrap">
+                      {product?.stockQuantity > 0 ? 'Buy Now' : 'Out of Stock'}
                     </span>
                   </button>
                 </div>
