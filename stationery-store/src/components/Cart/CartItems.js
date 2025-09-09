@@ -30,14 +30,14 @@ const CartItems = ({ cartItems, updateQuantity, removeItem }) => {
               <div className="flex-grow">
                 <h3 className="text-lg font-semibold text-[#2f153c]">{item.name}</h3>
                 <p className="text-sm text-[#2f153c]/70">{item.variant}</p>
-                <p className="text-base font-bold text-[#2f153c] mt-1">{item.price}</p>
+                <p className="text-base font-bold text-[#2f153c] mt-1">${parseFloat(item.price).toFixed(2)}</p>
               </div>
               
               {/* Quantity Controls */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-[#2f153c]/50 rounded-lg overflow-hidden">
                   <button 
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    onClick={() => updateQuantity(item.id, item.quantity - 1, item.variant)}
                     className="px-0.75 py-0.25 bg-gray-100 hover:bg-gray-200 transition-colors"
                     aria-label="Decrease quantity"
                   >
@@ -45,7 +45,7 @@ const CartItems = ({ cartItems, updateQuantity, removeItem }) => {
                   </button>
                   <span className="px-1 py-0.25 text-center min-w-[2.5rem]">{item.quantity}</span>
                   <button 
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.id, item.quantity + 1, item.variant)}
                     className="px-0.75 py-0.25 bg-gray-100 hover:bg-gray-200 transition-colors"
                     aria-label="Increase quantity"
                   >
@@ -55,7 +55,7 @@ const CartItems = ({ cartItems, updateQuantity, removeItem }) => {
                 
                 {/* Remove Button */}
                 <button 
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item.id, item.variant)}
                   className="text-[#2f153c]/70 hover:text-red-500 transition-colors p-1"
                   aria-label="Remove item"
                 >

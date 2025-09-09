@@ -117,7 +117,7 @@ const UserProfile = () => {
                   <span className="text-[#2f153c]/40">→</span>
                 </button>
                 
-                <button className="w-full flex items-center justify-between p-4 bg-white/80 rounded-lg hover:bg-[#FFE8CD]/50 transition-all duration-200">
+                <Link href="/profile/addresses" className="w-full flex items-center justify-between p-4 bg-white/80 rounded-lg hover:bg-[#FFE8CD]/50 transition-all duration-200">
                   <div className="flex items-center gap-3">
                     <MapPin className="h-5 w-5 text-[#2f153c]/70" />
                     <div>
@@ -126,7 +126,7 @@ const UserProfile = () => {
                     </div>
                   </div>
                   <span className="text-[#2f153c]/40">→</span>
-                </button>
+                </Link>
                 
                 <button className="w-full flex items-center justify-between p-4 bg-white/80 rounded-lg hover:bg-[#FFE8CD]/50 transition-all duration-200">
                   <div className="flex items-center gap-3">

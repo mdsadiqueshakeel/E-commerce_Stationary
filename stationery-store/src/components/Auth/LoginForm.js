@@ -69,7 +69,7 @@ const LoginForm = () => {
           console.error("Failed to fetch user profile:", profileError);
         }
         
-        router.push(redirectPath);
+        window.location.href = redirectPath;
       } else {
         setErrorMessage("Invalid credentials");
       }

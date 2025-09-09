@@ -446,7 +446,11 @@ const ProductDetailsSection = ({ productId }) => {
                       // Import dynamically to avoid SSR issues
                       import('../../utils/cartUtils').then(({ addToCart }) => {
                         if (product && product.stockQuantity > 0) {
-                          addToCart(product, quantity, selectedVariant);
+                          const productToAdd = {
+                            ...product,
+                            image: product.images && product.images.length > 0 ? product.images[0].src : '/placeholder-image.jpg',
+                          };
+                          addToCart(productToAdd, quantity, selectedVariant);
                           window.dispatchEvent(new Event('cartUpdated'));
                           // Show a toast or notification
                         }
@@ -465,7 +469,11 @@ const ProductDetailsSection = ({ productId }) => {
                       // Import dynamically to avoid SSR issues
                       import('../../utils/cartUtils').then(({ addToCart }) => {
                         if (product && product.stockQuantity > 0) {
-                          addToCart(product, quantity, selectedVariant);
+                          const productToAdd = {
+                            ...product,
+                            image: product.images && product.images.length > 0 ? product.images[0].src : '/placeholder-image.jpg',
+                          };
+                          addToCart(productToAdd, quantity, selectedVariant);
                           // Navigate to cart page
                           window.location.href = '/cart';
                         }

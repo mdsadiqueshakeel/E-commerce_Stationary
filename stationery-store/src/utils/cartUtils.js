@@ -15,6 +15,7 @@ export const addToCart = (product, quantity = 1, variant = null) => {
     if (existingCart) {
       cart = JSON.parse(existingCart);
     }
+    console.log('Product being added to cart:', product);
     
     // Check if product already exists in cart
     const existingItemIndex = cart.findIndex(item => 
@@ -37,6 +38,7 @@ export const addToCart = (product, quantity = 1, variant = null) => {
       });
     }
     
+    console.log('Cart before saving to localStorage:', cart);
     // Save updated cart to localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
     
@@ -78,8 +80,9 @@ export const removeFromCart = (productId, variant = null) => {
  */
 export const getCart = () => {
   try {
-    const cart = localStorage.getItem('cart');
-    return cart ? JSON.parse(cart) : [];
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    console.log('Cart retrieved from localStorage:', cart);
+    return cart;
   } catch (error) {
     console.error('Error getting cart:', error);
     return [];

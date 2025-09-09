@@ -80,7 +80,7 @@ const CheckoutContent = () => {
   useEffect(() => {
     const calculateTotals = () => {
       const itemSubtotal = cartItems.reduce((sum, item) => {
-        const price = parseFloat(item.price.replace('$', ''));
+        const price = parseFloat(item.price);
         return sum + (price * item.quantity);
       }, 0);
 
@@ -91,7 +91,9 @@ const CheckoutContent = () => {
       const discountAmount = discount;
       
       const taxAmount = (itemSubtotal - discountAmount) * 0.08; // 8% tax rate
-      const totalAmount = itemSubtotal - discountAmount + taxAmount + shippingCost;
+      
+      // Ensure totalAmount is not negative
+      const totalAmount = Math.max(0, itemSubtotal - discountAmount + taxAmount + shippingCost);
 
       setSubtotal(itemSubtotal);
       setShipping(shippingCost);

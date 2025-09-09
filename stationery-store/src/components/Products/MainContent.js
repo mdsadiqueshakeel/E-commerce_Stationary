@@ -296,7 +296,11 @@ const MainContentSection = () => {
                           onClick={() => {
                             // Import dynamically to avoid SSR issues
                             import('../../utils/cartUtils').then(({ addToCart }) => {
-                              addToCart(product, 1);
+                              const productToAdd = {
+                                ...product,
+                                image: getProductImage(product) // Ensure image is a string URL
+                              };
+                              addToCart(productToAdd, 1);
                               // Dispatch custom event to update cart count
                               window.dispatchEvent(new Event('cartUpdated'));
                             });

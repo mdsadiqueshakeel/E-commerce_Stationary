@@ -22,8 +22,8 @@ const CouponCode = ({ applyCoupon, setCouponCode }) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#FFdcdc] to-[#FFf2eb] backdrop-blur-sm rounded-xl shadow-md p-6 mb-4">
-      <h3 className="text-lg font-bold text-[#2f153c] mb-4">Apply Coupon</h3>
+    <div className="bg-gradient-to-br text-[#2f153c] from-[#FFdcdc] to-[#FFf2eb] backdrop-blur-sm rounded-xl shadow-md p-6 mb-4">
+      <h3 className="text-lg font-bold  mb-4">Apply Coupon</h3>
       
       <div className="flex flex-col sm:flex-row gap-3">
         <input

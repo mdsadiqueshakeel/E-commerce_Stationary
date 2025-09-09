@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getCart, updateCartItemQuantity, removeFromCart } from "../../utils/cartUtils";
 import CartHeader from "./CartHeader";
 import CartItems from "./CartItems";
 import OrderSummary from "./OrderSummary";
@@ -21,11 +22,8 @@ const CartContent = () => {
     const loadCartItems = () => {
       setIsLoading(true);
       try {
-        const storedCart = localStorage.getItem("cart");
-        if (storedCart) {
-          const parsedCart = JSON.parse(storedCart);
-          setCartItems(parsedCart);
-        }
+        const items = getCart();
+        setCartItems(items);
       } catch (error) {
         console.error("Error loading cart from localStorage:", error);
       } finally {
@@ -34,13 +32,24 @@ const CartContent = () => {
     };
     
     loadCartItems();
+
+    // Listen for storage events to update cart count when cart changes
+    window.addEventListener('storage', loadCartItems);
+    
+    // Custom event for cart updates within the same window
+    window.addEventListener('cartUpdated', loadCartItems);
+
+    return () => {
+      window.removeEventListener('storage', loadCartItems);
+      window.removeEventListener('cartUpdated', loadCartItems);
+    };
   }, []);
   
   useEffect(() => {
     // Calculate totals whenever cart items change
     const calculateTotals = () => {
       const itemSubtotal = cartItems.reduce((sum, item) => {
-        const price = parseFloat(item.price.replace('$', ''));
+        const price = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
         return sum + (price * item.quantity);
       }, 0);
       
@@ -55,28 +64,20 @@ const CartContent = () => {
     calculateTotals();
   }, [cartItems]);
   
-  const updateQuantity = (itemId, newQuantity) => {
+  const updateQuantity = (itemId, newQuantity, variant) => {
     if (newQuantity < 1) return;
-    
-    const updatedCart = cartItems.map(item => 
-      item.id === itemId ? { ...item, quantity: newQuantity } : item
-    );
-    
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    updateCartItemQuantity(itemId, newQuantity, variant);
   };
   
-  const removeItem = (itemId) => {
+  const removeItem = (itemId, variant) => {
     const itemToRemove = document.getElementById(`cart-item-${itemId}`);
     if (itemToRemove) {
       itemToRemove.classList.add(itemExitClass);
       
       // Wait for animation to complete before removing from state
       setTimeout(() => {
-        const updatedCart = cartItems.filter(item => item.id !== itemId);
-        setCartItems(updatedCart);
-        localStorage.setItem("cart", JSON.stringify(updatedCart));
-      }, 300); // Match this with the animation duration
+        removeFromCart(itemId, variant);
+      }, 200); // Match this with the animation duration
     }
   };
 

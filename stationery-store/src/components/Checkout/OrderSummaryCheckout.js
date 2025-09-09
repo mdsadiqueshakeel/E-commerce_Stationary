@@ -33,7 +33,7 @@ const OrderSummaryCheckout = ({
                 <h4 className="text-sm font-medium text-[#2f153c] line-clamp-1">{item.name}</h4>
                 <div className="flex justify-between items-center mt-1">
                   <span className="text-xs text-[#2f153c]/70">Qty: {item.quantity}</span>
-                  <span className="text-sm font-medium text-[#2f153c]">{item.price}</span>
+                  <span className="text-sm font-medium text-[#2f153c]">${parseFloat(item.price).toFixed(2)}</span>
                 </div>
               </div>
             </div>

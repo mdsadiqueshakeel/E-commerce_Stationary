@@ -11,6 +11,8 @@ const API_ROUTES = {
     forget: `${BASE_URL}/api/auth/request/reset-password`,
     reset: `${BASE_URL}/api/auth/reset-password`,
     googleLogin: `${BASE_URL}/api/auth/google`,
+    addresses: `${BASE_URL}/api/auth/addresses`,
+    autofillAddress: `${BASE_URL}/api/auth/addresses/autofill`,
   },
   products: {
     getAllbyAdmin: `${BASE_URL}/api/admin/products`,
@@ -28,7 +30,7 @@ const API_ROUTES = {
   users: {
     updateProfile: `${BASE_URL}/api/auth/profile`,
     getProfile: `${BASE_URL}/api/auth/me`,
-    getProductById: (id) => `${BASE_URL}/api/products/${id}`,
+    getProductById: (id) => API_ROUTES.products.getById(id),
     getAllProducts: `${BASE_URL}/api/products`,
   },
 };

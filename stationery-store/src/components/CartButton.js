@@ -81,7 +81,7 @@ const CartButton = () => {
                     </div>
                     <div className="flex-grow">
                       <p className="text-sm font-medium text-[#2f153c] line-clamp-1">{item.name}</p>
-                      <p className="text-xs text-[#2f153c]/70">{item.price} × {item.quantity}</p>
+                      <p className="text-xs text-[#2f153c]/70">${parseFloat(item.price).toFixed(2)} × {item.quantity}</p>
                     </div>
                     <div className="flex items-center border  text-[#2f153c]/70 border-[#2f153c]/20 rounded">
                       <button 
@@ -107,7 +107,7 @@ const CartButton = () => {
                   <span className="text-[#2f153c]/70">Subtotal:</span>
                   <span className="font-medium text-[#2f153c]">
                     ${cartItems.reduce((sum, item) => {
-                      const price = parseFloat(item.price.replace('$', ''));
+                      const price = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                       return sum + (price * item.quantity);
                     }, 0).toFixed(2)}
                   </span>
